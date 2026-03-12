@@ -1,5 +1,5 @@
 {
-  "name": "photoshop-layer-manager-plugin",
+  "name": "PSP1",
   "version": "1.0.0",
   "description": "Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operations, bulk styling, and intelligent automation",
   "main": "index.js",
@@ -50,10 +50,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/photoshop-layer-manager-plugin.git"
+    "url": "https://github.com/iceyxsm/PSP1.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/photoshop-layer-manager-plugin/issues"
+    "url": "https://github.com/iceyxsm/PSP1/issues"
   },
-  "homepage": "https://github.com/your-username/photoshop-layer-manager-plugin#readme"
+  "homepage": "https://github.com/iceyxsm/PSP1#readme"
 }

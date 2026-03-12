@@ -1,4 +1,4 @@
-# Layer Manager Pro - Photoshop Plugin
+# PSP1 - Photoshop Layer Manager Plugin
 
 Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operations, bulk styling, and intelligent automation.
 
@@ -39,10 +39,10 @@ Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operation
 - Windows 10/11 (macOS support coming soon)
 
 ### Install from CCX Package
-1. Download the latest `.ccx` file from [Releases](https://github.com/your-username/photoshop-layer-manager-plugin/releases)
+1. Download the latest `.ccx` file from [Releases](https://github.com/iceyxsm/PSP1/releases)
 2. Double-click the `.ccx` file to install
 3. Restart Photoshop
-4. Find "Layer Manager Pro" in Window → Plugins
+4. Find "PSP1 - Layer Manager Pro" in Window → Plugins
 
 ### Development Installation
 1. Clone this repository
@@ -54,7 +54,7 @@ Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operation
 
 ### Quick Start
 1. Open Photoshop and create/open a document with multiple layers
-2. Open Layer Manager Pro panel: Window → Plugins → Layer Manager Pro
+2. Open PSP1 panel: Window → Plugins → PSP1 - Layer Manager Pro
 3. Select layers you want to group
 4. Click "🗂️ One-Click Group" to create an organized group
 
@@ -74,7 +74,7 @@ Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operation
 
 ### Project Structure
 ```
-photoshop-layer-manager-plugin/
+PSP1/
 ├── src/                    # TypeScript source code
 ├── tests/                  # Unit and property-based tests
 ├── icons/                  # Plugin icons for different themes
@@ -158,9 +158,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📖 [Documentation](https://github.com/your-username/photoshop-layer-manager-plugin/wiki)
-- 🐛 [Report Issues](https://github.com/your-username/photoshop-layer-manager-plugin/issues)
-- 💬 [Discussions](https://github.com/your-username/photoshop-layer-manager-plugin/discussions)
+- 📖 [Documentation](https://github.com/iceyxsm/PSP1/wiki)
+- 🐛 [Report Issues](https://github.com/iceyxsm/PSP1/issues)
+- 💬 [Discussions](https://github.com/iceyxsm/PSP1/discussions)
 
 ## Roadmap
 

@@ -9,6 +9,10 @@ dist/
 build/
 *.tsbuildinfo
 
+# Kiro folders and files
+.kiro/
+**/.kiro/
+
 # IDE files
 .vscode/
 .idea/

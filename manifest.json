@@ -1,7 +1,7 @@
 {
   "manifestVersion": 5,
-  "id": "com.layermanager.photoshop",
-  "name": "Layer Manager Pro",
+  "id": "com.psp1.photoshop",
+  "name": "PSP1 - Layer Manager Pro",
   "version": "1.0.0",
   "main": "index.html",
   "host": {
@@ -13,7 +13,7 @@
       "type": "panel",
       "id": "layerManagerPanel",
       "label": {
-        "default": "Layer Manager Pro"
+        "default": "PSP1 - Layer Manager Pro"
       },
       "minimumSize": {"width": 280, "height": 400},
       "maximumSize": {"width": 800, "height": 1200},
