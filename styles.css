@@ -398,6 +398,58 @@ body {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
+/* Layer List */
+.layer-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--uxp-host-border-color, #ccc);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  background: var(--uxp-host-input-background-color, white);
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+.layer-item:hover {
+  background: var(--uxp-host-button-background-color-hover, #f0f0f0);
+}
+
+.layer-item.selected {
+  background: var(--primary-color);
+  color: white;
+}
+
+.layer-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-right: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.layer-name {
+  flex: 1;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layer-type {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--uxp-host-border-color, #ddd);
+  border-radius: 3px;
+  margin-left: var(--spacing-sm);
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;

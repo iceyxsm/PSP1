@@ -8,160 +8,97 @@
 <body>
     <div class="header">
         <h1>PSP1 - Layer Manager Pro</h1>
-        <div class="subtitle">Intelligent Layer Management for Photoshop</div>
     </div>
     
-    <!-- Quick Actions Section -->
+    <!-- Layer Selection Section -->
     <div class="section">
         <div class="section-header">
-            <div class="section-title">
-                Quick Actions
-            </div>
+            <div class="section-title">Select Layers</div>
+            <button class="btn btn-small" id="refreshLayers">Refresh</button>
         </div>
         <div class="section-content">
-            <div class="button-group">
-                <button class="btn btn-primary" id="oneClickGroup" title="Group selected layers instantly">
-                    <span>One-Click Group</span>
-                    <span class="keyboard-shortcut">Ctrl+G</span>
-                </button>
-                <button class="btn" id="autoGroup" title="Intelligently group layers by content and proximity">
-                    <span>Smart Auto-Group</span>
-                </button>
+            <div class="layer-list" id="layerList">
+                <div class="help-text">Click Refresh to load layers</div>
+            </div>
+            <div class="button-row" style="margin-top: 12px;">
+                <button class="btn" id="selectAll" style="flex: 1;">Select All</button>
+                <button class="btn" id="deselectAll" style="flex: 1;">Deselect All</button>
             </div>
         </div>
     </div>
     
-    <!-- Bulk Styling Section -->
+    <!-- Group Actions -->
     <div class="section">
         <div class="section-header">
-            <div class="section-title">
-                Bulk Styling
+            <div class="section-title">Group Actions</div>
+        </div>
+        <div class="section-content">
+            <div class="input-group">
+                <label class="input-label">Group Name (optional)</label>
+                <input type="text" class="input-field" id="groupNameInput" placeholder="Auto-generate if empty" />
             </div>
+            <button class="btn btn-primary" id="createGroup">Create Group</button>
+            <button class="btn" id="smartAutoGroup">Smart Auto-Group</button>
+        </div>
+    </div>
+    
+    <!-- Bulk Styling -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">Bulk Styling</div>
         </div>
         <div class="section-content">
             <div class="button-group">
-                <!-- Text Color -->
                 <div class="input-group">
                     <label class="input-label">Text Color</label>
                     <div class="button-row">
-                        <input type="color" class="color-picker" id="textColor" value="#000000" title="Pick text color">
-                        <button class="btn" id="bulkColorText" style="flex: 1;" title="Apply color to all selected text layers">
-                            <span>Apply to Text</span>
-                        </button>
+                        <input type="color" class="color-picker" id="textColor" value="#000000">
+                        <button class="btn" id="applyTextColor" style="flex: 1;">Apply to Selected</button>
                     </div>
-                    <div class="recent-colors" id="recentTextColors"></div>
                 </div>
                 
-                <!-- Shape Color -->
                 <div class="input-group">
                     <label class="input-label">Shape Color</label>
                     <div class="button-row">
-                        <input type="color" class="color-picker" id="shapeColor" value="#000000" title="Pick shape color">
-                        <button class="btn" id="bulkColorShapes" style="flex: 1;" title="Apply color to all selected shape layers">
-                            <span>Apply to Shapes</span>
-                        </button>
+                        <input type="color" class="color-picker" id="shapeColor" value="#000000">
+                        <button class="btn" id="applyShapeColor" style="flex: 1;">Apply to Selected</button>
                     </div>
-                    <div class="recent-colors" id="recentShapeColors"></div>
                 </div>
                 
-                <div class="divider"></div>
-                
-                <!-- Font Management -->
                 <div class="input-group">
                     <label class="input-label">Font</label>
-                    <div class="button-row">
-                        <select class="select-field" id="fontSelect" style="flex: 1;">
-                            <option value="">Select Font...</option>
-                        </select>
-                        <button class="btn btn-icon" id="refreshFonts" title="Refresh font list">
-                            <span>Refresh</span>
-                        </button>
-                    </div>
-                    <button class="btn" id="bulkFont" title="Apply font to all selected text layers">
-                        <span>Apply Font</span>
-                    </button>
-                </div>
-                
-                <div class="divider"></div>
-                
-                <!-- Effects -->
-                <div class="input-group">
-                    <label class="input-label">Effects</label>
-                    <div class="button-row">
-                        <select class="select-field" id="outlinePreset" style="flex: 1;">
-                            <option value="thin">Thin Outline (1px)</option>
-                            <option value="medium" selected>Medium Outline (3px)</option>
-                            <option value="thick">Thick Outline (6px)</option>
-                            <option value="custom">Custom...</option>
-                        </select>
-                    </div>
-                    <button class="btn" id="autoOutline" title="Apply outline effect to selected layers">
-                        <span>Apply Outline</span>
-                    </button>
+                    <select class="select-field" id="fontSelect">
+                        <option value="">Select Font...</option>
+                    </select>
+                    <button class="btn" id="applyFont">Apply Font</button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Group Management Section -->
+    <!-- Group Management -->
     <div class="section">
         <div class="section-header">
-            <div class="section-title">
-                Group Management
-            </div>
+            <div class="section-title">Group Management</div>
         </div>
         <div class="section-content">
             <div class="button-group">
+                <button class="btn" id="toggleVisibility">Toggle Visibility</button>
                 <div class="button-row">
-                    <button class="btn" id="toggleVisibility" style="flex: 1;" title="Toggle visibility of selected group">
-                        <span>Toggle Visibility</span>
-                        <span class="keyboard-shortcut">Ctrl+Shift+H</span>
-                    </button>
+                    <button class="btn" id="showAll" style="flex: 1;">Show All</button>
+                    <button class="btn" id="hideAll" style="flex: 1;">Hide All</button>
                 </div>
-                
-                <div class="button-row">
-                    <button class="btn" id="showAllGroups" style="flex: 1;" title="Show all groups">
-                        <span>Show All</span>
-                        <span class="keyboard-shortcut">Ctrl+Shift+S</span>
-                    </button>
-                    <button class="btn" id="hideAllGroups" style="flex: 1;" title="Hide all groups">
-                        <span>Hide All</span>
-                        <span class="keyboard-shortcut">Ctrl+Shift+D</span>
-                    </button>
-                </div>
-                
-                <div class="divider"></div>
-                
-                <div class="input-group">
-                    <label class="input-label">Group Name</label>
-                    <input type="text" class="input-field" id="groupNameInput" placeholder="Enter group name..." />
-                    <div class="help-text">Leave empty for smart auto-naming</div>
-                </div>
-                
-                <button class="btn" id="renameGroup" title="Rename selected group with smart suggestions">
-                    <span>Smart Rename</span>
-                </button>
             </div>
         </div>
     </div>
     
-    <!-- Image Tools Section -->
+    <!-- Image Tools -->
     <div class="section">
         <div class="section-header">
-            <div class="section-title">
-                Image Tools
-            </div>
+            <div class="section-title">Image Tools</div>
         </div>
         <div class="section-content">
-            <div class="button-group">
-                <button class="btn btn-primary" id="imageReplace" title="Replace image with automatic dimension matching">
-                    <span>Replace Image</span>
-                </button>
-                <div class="help-text">
-                    Select an image layer, then click to replace with a new image. 
-                    Dimensions and position will be automatically matched.
-                </div>
-            </div>
+            <button class="btn" id="replaceImage">Replace Image</button>
         </div>
     </div>
     
@@ -171,24 +108,6 @@
     </div>
     
     <div class="status" id="status"></div>
-    
-    <!-- Help Section -->
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">
-                Quick Help
-            </div>
-        </div>
-        <div class="section-content">
-            <div class="help-text">
-                <strong>Tips:</strong><br>
-                • Select multiple layers before grouping<br>
-                • Use Smart Auto-Group for intelligent organization<br>
-                • Recent colors appear below color pickers<br>
-                • All operations support undo (Ctrl+Z)
-            </div>
-        </div>
-    </div>
     
     <script src="index.js"></script>
 </body>

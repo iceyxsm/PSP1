@@ -53,6 +53,10 @@ const pluginState: PluginState = {
 let statusElement: HTMLElement | null;
 let progressElement: HTMLElement | null;
 let progressBar: HTMLElement | null;
+let layerListElement: HTMLElement | null;
+
+// Track selected layers
+let selectedLayerIds: Set<number> = new Set();
 
 // Initialize plugin
 entrypoints.setup({
@@ -91,9 +95,9 @@ entrypoints.setup({
     },
   },
   commands: {
-    oneClickGroup: {
+    createGroup: {
       run(): Promise<OperationResult> {
-        return executeOneClickGroup();
+        return createGroupFromSelectedLayers(generateGroupName());
       },
     },
     bulkColorText: {
@@ -119,29 +123,42 @@ function initializeUI(): void {
   statusElement = document.getElementById('status');
   progressElement = document.getElementById('progress');
   progressBar = document.getElementById('progressBar');
+  layerListElement = document.getElementById('layerList');
 
-  // Bind button events
-  const oneClickGroupBtn = document.getElementById('oneClickGroup');
-  const autoGroupBtn = document.getElementById('autoGroup');
-  const bulkColorTextBtn = document.getElementById('bulkColorText');
-  const bulkColorShapesBtn = document.getElementById('bulkColorShapes');
-  const bulkFontBtn = document.getElementById('bulkFont');
-  const autoOutlineBtn = document.getElementById('autoOutline');
+  // Bind layer list buttons
+  const refreshLayersBtn = document.getElementById('refreshLayers');
+  const selectAllBtn = document.getElementById('selectAll');
+  const deselectAllBtn = document.getElementById('deselectAll');
+  const createGroupBtn = document.getElementById('createGroup');
+  const smartAutoGroupBtn = document.getElementById('smartAutoGroup');
+
+  refreshLayersBtn?.addEventListener('click', handleRefreshLayers);
+  selectAllBtn?.addEventListener('click', handleSelectAll);
+  deselectAllBtn?.addEventListener('click', handleDeselectAll);
+  createGroupBtn?.addEventListener('click', handleCreateGroup);
+  smartAutoGroupBtn?.addEventListener('click', handleAutoGroup);
+
+  // Bind styling buttons
+  const applyTextColorBtn = document.getElementById('applyTextColor');
+  const applyShapeColorBtn = document.getElementById('applyShapeColor');
+  const applyFontBtn = document.getElementById('applyFont');
+
+  applyTextColorBtn?.addEventListener('click', handleBulkColorText);
+  applyShapeColorBtn?.addEventListener('click', handleBulkColorShapes);
+  applyFontBtn?.addEventListener('click', handleBulkFont);
+
+  // Bind group management buttons
   const toggleVisibilityBtn = document.getElementById('toggleVisibility');
-  const renameGroupBtn = document.getElementById('renameGroup');
-  const batchVisibilityBtn = document.getElementById('batchVisibility');
-  const imageReplaceBtn = document.getElementById('imageReplace');
+  const showAllBtn = document.getElementById('showAll');
+  const hideAllBtn = document.getElementById('hideAll');
 
-  oneClickGroupBtn?.addEventListener('click', handleOneClickGroup);
-  autoGroupBtn?.addEventListener('click', handleAutoGroup);
-  bulkColorTextBtn?.addEventListener('click', handleBulkColorText);
-  bulkColorShapesBtn?.addEventListener('click', handleBulkColorShapes);
-  bulkFontBtn?.addEventListener('click', handleBulkFont);
-  autoOutlineBtn?.addEventListener('click', handleAutoOutline);
   toggleVisibilityBtn?.addEventListener('click', handleToggleVisibility);
-  renameGroupBtn?.addEventListener('click', handleRenameGroup);
-  batchVisibilityBtn?.addEventListener('click', handleBatchVisibility);
-  imageReplaceBtn?.addEventListener('click', handleImageReplace);
+  showAllBtn?.addEventListener('click', handleShowAll);
+  hideAllBtn?.addEventListener('click', handleHideAll);
+
+  // Bind image tools
+  const replaceImageBtn = document.getElementById('replaceImage');
+  replaceImageBtn?.addEventListener('click', handleImageReplace);
 }
 
 // Update UI state
@@ -182,18 +199,40 @@ function updateProgress(percentage: number): void {
   progressBar.style.width = `${percentage}%`;
 }
 
-// Core functionality - One-Click Group
-async function handleOneClickGroup(): Promise<void> {
+// Layer list management
+async function handleRefreshLayers(): Promise<void> {
   try {
     showProgress(true);
-    updateProgress(20);
+    updateProgress(30);
 
-    await app.batchPlay(
+    const layers = await getAllLayers();
+    updateProgress(70);
+
+    renderLayerList(layers);
+    updateProgress(100);
+    showProgress(false);
+
+    showStatus(`Loaded ${layers.length} layers`);
+  } catch (error) {
+    showProgress(false);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    showStatus(`Error loading layers: ${errorMessage}`, 'error');
+    console.error('Refresh layers error:', error);
+  }
+}
+
+async function getAllLayers(): Promise<any[]> {
+  try {
+    if (!app.activeDocument) {
+      throw new Error('No active document');
+    }
+
+    const result = await app.batchPlay(
       [
         {
           _obj: 'get',
           _target: [
-            { _property: 'targetLayers' },
+            { _property: 'layer' },
             { _ref: 'document', _id: app.activeDocument.id },
           ],
         },
@@ -201,38 +240,154 @@ async function handleOneClickGroup(): Promise<void> {
       {}
     );
 
+    // Get all layers from the document
+    const layers = app.activeDocument.layers;
+    const layerData: any[] = [];
+
+    for (let i = 0; i < layers.length; i++) {
+      const layer = layers[i];
+      layerData.push({
+        id: layer.id,
+        name: layer.name,
+        kind: layer.kind,
+        visible: layer.visible,
+      });
+    }
+
+    return layerData;
+  } catch (error) {
+    console.error('Error getting all layers:', error);
+    return [];
+  }
+}
+
+function renderLayerList(layers: any[]): void {
+  if (!layerListElement) return;
+
+  if (layers.length === 0) {
+    layerListElement.innerHTML = '<div class="help-text">No layers found</div>';
+    return;
+  }
+
+  layerListElement.innerHTML = '';
+
+  layers.forEach((layer) => {
+    if (!layerListElement) return;
+    
+    const layerItem = document.createElement('div');
+    layerItem.className = 'layer-item';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'layer-checkbox';
+    checkbox.id = `layer-${layer.id}`;
+    checkbox.checked = selectedLayerIds.has(layer.id);
+    checkbox.addEventListener('change', () => handleLayerCheckboxChange(layer.id, checkbox.checked));
+
+    const label = document.createElement('label');
+    label.htmlFor = `layer-${layer.id}`;
+    label.className = 'layer-name';
+    label.textContent = layer.name;
+
+    const typeSpan = document.createElement('span');
+    typeSpan.className = 'layer-type';
+    typeSpan.textContent = getLayerTypeLabel(layer.kind);
+
+    layerItem.appendChild(checkbox);
+    layerItem.appendChild(label);
+    layerItem.appendChild(typeSpan);
+
+    layerListElement.appendChild(layerItem);
+  });
+}
+
+function getLayerTypeLabel(kind: string): string {
+  const typeMap: { [key: string]: string } = {
+    pixel: 'Image',
+    text: 'Text',
+    shape: 'Shape',
+    group: 'Group',
+    adjustment: 'Adjustment',
+    smartObject: 'Smart Object',
+  };
+  return typeMap[kind] || kind;
+}
+
+function handleLayerCheckboxChange(layerId: number, checked: boolean): void {
+  if (checked) {
+    selectedLayerIds.add(layerId);
+  } else {
+    selectedLayerIds.delete(layerId);
+  }
+}
+
+function handleSelectAll(): void {
+  const checkboxes = document.querySelectorAll('.layer-checkbox') as NodeListOf<HTMLInputElement>;
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = true;
+    const layerId = parseInt(checkbox.id.replace('layer-', ''));
+    selectedLayerIds.add(layerId);
+  });
+  showStatus(`Selected ${selectedLayerIds.size} layers`);
+}
+
+function handleDeselectAll(): void {
+  const checkboxes = document.querySelectorAll('.layer-checkbox') as NodeListOf<HTMLInputElement>;
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = false;
+  });
+  selectedLayerIds.clear();
+  showStatus('Deselected all layers');
+}
+
+async function handleCreateGroup(): Promise<void> {
+  try {
+    if (selectedLayerIds.size === 0) {
+      showStatus('Please select at least one layer', 'error');
+      return;
+    }
+
+    showProgress(true);
+    updateProgress(20);
+
+    const groupNameInput = document.getElementById('groupNameInput') as HTMLInputElement;
+    const groupName = groupNameInput?.value.trim() || generateGroupName();
+
     updateProgress(50);
 
-    const result = await executeOneClickGroup();
+    // Create group with selected layers
+    const result = await createGroupFromSelectedLayers(groupName);
 
     updateProgress(100);
     showProgress(false);
 
     if (result.success) {
-      showStatus(
-        `Created group "${result.groupName}" with ${result.layerCount} layers`
-      );
-      await commitAndPush('Created one-click group');
+      showStatus(`Created group "${groupName}" with ${selectedLayerIds.size} layers`);
+      selectedLayerIds.clear();
+      if (groupNameInput) groupNameInput.value = '';
+      await handleRefreshLayers(); // Refresh the layer list
     } else {
-      showStatus(result.message || 'Unknown error', 'error');
+      showStatus(result.message || 'Failed to create group', 'error');
     }
   } catch (error) {
     showProgress(false);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     showStatus(`Error: ${errorMessage}`, 'error');
-    console.error('One-click group error:', error);
+    console.error('Create group error:', error);
   }
 }
 
-async function executeOneClickGroup(): Promise<OperationResult> {
+async function createGroupFromSelectedLayers(groupName: string): Promise<OperationResult> {
   try {
-    const groupName = generateGroupName();
+    const layerIds = Array.from(selectedLayerIds);
+
+    // Create a new group
     const result = await app.batchPlay(
       [
         {
           _obj: 'make',
           _target: [{ _ref: 'layerSection' }],
-          layerID: [{ _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' }],
+          layerID: layerIds.map((id) => ({ _ref: 'layer', _id: id })),
           name: groupName,
         },
       ],
@@ -242,7 +397,7 @@ async function executeOneClickGroup(): Promise<OperationResult> {
     return {
       success: true,
       groupName,
-      layerCount: 1, // Simplified for now
+      layerCount: layerIds.length,
       result,
     };
   } catch (error) {
@@ -251,6 +406,49 @@ async function executeOneClickGroup(): Promise<OperationResult> {
       success: false,
       message: errorMessage,
     };
+  }
+}
+
+async function handleShowAll(): Promise<void> {
+  try {
+    showProgress(true);
+    updateProgress(50);
+
+    await setAllLayersVisibility(true);
+
+    updateProgress(100);
+    showProgress(false);
+    showStatus('Showed all layers');
+    await handleRefreshLayers();
+  } catch (error) {
+    showProgress(false);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    showStatus(`Error: ${errorMessage}`, 'error');
+  }
+}
+
+async function handleHideAll(): Promise<void> {
+  try {
+    showProgress(true);
+    updateProgress(50);
+
+    await setAllLayersVisibility(false);
+
+    updateProgress(100);
+    showProgress(false);
+    showStatus('Hid all layers');
+    await handleRefreshLayers();
+  } catch (error) {
+    showProgress(false);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    showStatus(`Error: ${errorMessage}`, 'error');
+  }
+}
+
+async function setAllLayersVisibility(visible: boolean): Promise<void> {
+  const layers = app.activeDocument.layers;
+  for (let i = 0; i < layers.length; i++) {
+    layers[i].visible = visible;
   }
 }
 
@@ -274,7 +472,6 @@ async function handleAutoGroup(): Promise<void> {
       showStatus(
         `Smart-grouped ${bestSuggestion.layers.length} layers by ${bestSuggestion.reasoning}`
       );
-      await commitAndPush('Created smart auto-group');
     } else {
       showProgress(false);
       showStatus('No suitable grouping suggestions found', 'error');
@@ -290,6 +487,11 @@ async function handleAutoGroup(): Promise<void> {
 // Bulk text color management
 async function handleBulkColorText(): Promise<void> {
   try {
+    if (selectedLayerIds.size === 0) {
+      showStatus('Please select at least one layer', 'error');
+      return;
+    }
+
     const colorInput = document.getElementById('textColor') as HTMLInputElement;
     const color = colorInput?.value || '#000000';
     showProgress(true);
@@ -302,7 +504,6 @@ async function handleBulkColorText(): Promise<void> {
 
     if (result.success) {
       showStatus(`Applied color to ${result.textLayerCount} text layers`);
-      await commitAndPush('Applied bulk text color changes');
     } else {
       showStatus(result.message || 'Unknown error', 'error');
     }
@@ -317,33 +518,42 @@ async function handleBulkColorText(): Promise<void> {
 async function executeBulkColorText(hexColor: string): Promise<OperationResult> {
   try {
     const rgb = hexToRgb(hexColor);
+    const layerIds = Array.from(selectedLayerIds);
+    let textLayerCount = 0;
 
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'set',
-          _target: [
-            { _property: 'textStyle' },
-            { _ref: 'textLayer', _enum: 'ordinal', _value: 'targetEnum' },
-          ],
-          to: {
-            _obj: 'textStyle',
-            color: {
-              _obj: 'RGBColor',
-              red: rgb.r,
-              green: rgb.g,
-              blue: rgb.b,
+    for (const layerId of layerIds) {
+      try {
+        await app.batchPlay(
+          [
+            {
+              _obj: 'set',
+              _target: [
+                { _property: 'textStyle' },
+                { _ref: 'textLayer', _id: layerId },
+              ],
+              to: {
+                _obj: 'textStyle',
+                color: {
+                  _obj: 'RGBColor',
+                  red: rgb.r,
+                  green: rgb.g,
+                  blue: rgb.b,
+                },
+              },
             },
-          },
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
+          ],
+          { modalBehavior: 'execute' }
+        );
+        textLayerCount++;
+      } catch (error) {
+        // Skip non-text layers
+        console.log(`Skipping layer ${layerId} - not a text layer`);
+      }
+    }
 
     return {
       success: true,
-      textLayerCount: 1, // Simplified for now
-      result,
+      textLayerCount,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -357,6 +567,11 @@ async function executeBulkColorText(hexColor: string): Promise<OperationResult> 
 // Bulk shape color management
 async function handleBulkColorShapes(): Promise<void> {
   try {
+    if (selectedLayerIds.size === 0) {
+      showStatus('Please select at least one layer', 'error');
+      return;
+    }
+
     const colorInput = document.getElementById('shapeColor') as HTMLInputElement;
     const color = colorInput?.value || '#000000';
     showProgress(true);
@@ -369,7 +584,6 @@ async function handleBulkColorShapes(): Promise<void> {
 
     if (result.success) {
       showStatus(`Applied color to ${result.shapeLayerCount} shape layers`);
-      await commitAndPush('Applied bulk shape color changes');
     } else {
       showStatus(result.message || 'Unknown error', 'error');
     }
@@ -384,30 +598,39 @@ async function handleBulkColorShapes(): Promise<void> {
 async function executeBulkColorShapes(hexColor: string): Promise<OperationResult> {
   try {
     const rgb = hexToRgb(hexColor);
+    const layerIds = Array.from(selectedLayerIds);
+    let shapeLayerCount = 0;
 
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'set',
-          _target: [
-            { _property: 'color' },
-            { _ref: 'contentLayer', _enum: 'ordinal', _value: 'targetEnum' },
+    for (const layerId of layerIds) {
+      try {
+        await app.batchPlay(
+          [
+            {
+              _obj: 'set',
+              _target: [
+                { _property: 'color' },
+                { _ref: 'contentLayer', _id: layerId },
+              ],
+              to: {
+                _obj: 'RGBColor',
+                red: rgb.r,
+                green: rgb.g,
+                blue: rgb.b,
+              },
+            },
           ],
-          to: {
-            _obj: 'RGBColor',
-            red: rgb.r,
-            green: rgb.g,
-            blue: rgb.b,
-          },
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
+          { modalBehavior: 'execute' }
+        );
+        shapeLayerCount++;
+      } catch (error) {
+        // Skip non-shape layers
+        console.log(`Skipping layer ${layerId} - not a shape layer`);
+      }
+    }
 
     return {
       success: true,
-      shapeLayerCount: 1, // Simplified for now
-      result,
+      shapeLayerCount,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -421,18 +644,30 @@ async function executeBulkColorShapes(hexColor: string): Promise<OperationResult
 // Bulk font management
 async function handleBulkFont(): Promise<void> {
   try {
+    if (selectedLayerIds.size === 0) {
+      showStatus('Please select at least one layer', 'error');
+      return;
+    }
+
     showProgress(true);
     updateProgress(25);
 
-    // For now, use a default font - in full implementation, show font picker
-    const result = await executeBulkFont('Arial');
+    const fontSelect = document.getElementById('fontSelect') as HTMLSelectElement;
+    const fontName = fontSelect?.value || 'Arial';
+
+    if (!fontName) {
+      showProgress(false);
+      showStatus('Please select a font', 'error');
+      return;
+    }
+
+    const result = await executeBulkFont(fontName);
 
     updateProgress(100);
     showProgress(false);
 
     if (result.success) {
       showStatus(`Applied font to ${result.textLayerCount} text layers`);
-      await commitAndPush('Applied bulk font changes');
     } else {
       showStatus(result.message || 'Unknown error', 'error');
     }
@@ -446,91 +681,37 @@ async function handleBulkFont(): Promise<void> {
 
 async function executeBulkFont(fontName: string): Promise<OperationResult> {
   try {
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'set',
-          _target: [
-            { _property: 'textStyle' },
-            { _ref: 'textLayer', _enum: 'ordinal', _value: 'targetEnum' },
-          ],
-          to: {
-            _obj: 'textStyle',
-            fontPostScriptName: fontName,
-          },
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
+    const layerIds = Array.from(selectedLayerIds);
+    let textLayerCount = 0;
 
-    return {
-      success: true,
-      textLayerCount: 1, // Simplified for now
-      result,
-    };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
-}
-
-// Auto outline generation
-async function handleAutoOutline(): Promise<void> {
-  try {
-    showProgress(true);
-    updateProgress(25);
-
-    const result = await executeAutoOutline();
-
-    updateProgress(100);
-    showProgress(false);
-
-    if (result.success) {
-      showStatus(`Applied outlines to ${result.layerCount} layers`);
-      await commitAndPush('Applied auto outlines');
-    } else {
-      showStatus(result.message || 'Unknown error', 'error');
-    }
-  } catch (error) {
-    showProgress(false);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    showStatus(`Error: ${errorMessage}`, 'error');
-    console.error('Auto outline error:', error);
-  }
-}
-
-async function executeAutoOutline(): Promise<OperationResult> {
-  try {
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'applyStyle',
-          _target: [{ _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' }],
-          using: {
-            _obj: 'layerEffects',
-            frameFX: {
-              _obj: 'frameFX',
-              enabled: true,
-              style: { _enum: 'frameStyle', _value: 'outsetFrame' },
-              size: {
-                _unit: 'pixelsUnit',
-                _value: pluginState.preferences.defaultOutlineWidth,
+    for (const layerId of layerIds) {
+      try {
+        await app.batchPlay(
+          [
+            {
+              _obj: 'set',
+              _target: [
+                { _property: 'textStyle' },
+                { _ref: 'textLayer', _id: layerId },
+              ],
+              to: {
+                _obj: 'textStyle',
+                fontPostScriptName: fontName,
               },
-              color: { _obj: 'RGBColor', red: 0, green: 0, blue: 0 },
             },
-          },
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
+          ],
+          { modalBehavior: 'execute' }
+        );
+        textLayerCount++;
+      } catch (error) {
+        // Skip non-text layers
+        console.log(`Skipping layer ${layerId} - not a text layer`);
+      }
+    }
 
     return {
       success: true,
-      layerCount: 1, // Simplified for now
-      result,
+      textLayerCount,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -544,20 +725,26 @@ async function executeAutoOutline(): Promise<OperationResult> {
 // Group visibility management
 async function handleToggleVisibility(): Promise<void> {
   try {
+    if (selectedLayerIds.size === 0) {
+      showStatus('Please select at least one layer', 'error');
+      return;
+    }
+
     showProgress(true);
     updateProgress(50);
 
-    const result = await executeToggleVisibility();
+    const layerIds = Array.from(selectedLayerIds);
+    for (const layerId of layerIds) {
+      const layer = app.activeDocument.layers.find((l: any) => l.id === layerId);
+      if (layer) {
+        layer.visible = !layer.visible;
+      }
+    }
 
     updateProgress(100);
     showProgress(false);
-
-    if (result.success) {
-      showStatus(`Toggled visibility for ${result.groupCount} groups`);
-      await commitAndPush('Toggled group visibility');
-    } else {
-      showStatus(result.message || 'Unknown error', 'error');
-    }
+    showStatus(`Toggled visibility for ${layerIds.length} layers`);
+    await handleRefreshLayers();
   } catch (error) {
     showProgress(false);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -566,132 +753,14 @@ async function handleToggleVisibility(): Promise<void> {
   }
 }
 
-async function executeToggleVisibility(): Promise<OperationResult> {
-  try {
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'set',
-          _target: [
-            { _property: 'visible' },
-            { _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' },
-          ],
-          to: {
-            _obj: 'get',
-            _target: [
-              { _property: 'visible' },
-              { _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' },
-            ],
-          },
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
-
-    return {
-      success: true,
-      groupCount: 1, // Simplified for now
-      result,
-    };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
-}
-
-// Smart group renaming
-async function handleRenameGroup(): Promise<void> {
-  try {
-    showProgress(true);
-    updateProgress(25);
-
-    const newName = await generateSmartGroupName();
-    updateProgress(75);
-
-    const result = await executeRenameGroup(newName);
-
-    updateProgress(100);
-    showProgress(false);
-
-    if (result.success) {
-      showStatus(`Renamed group to "${newName}"`);
-      await commitAndPush('Applied smart group rename');
-    } else {
-      showStatus(result.message || 'Unknown error', 'error');
-    }
-  } catch (error) {
-    showProgress(false);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    showStatus(`Error: ${errorMessage}`, 'error');
-    console.error('Rename group error:', error);
-  }
-}
-
-async function executeRenameGroup(name: string): Promise<OperationResult> {
-  try {
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'set',
-          _target: [
-            { _property: 'name' },
-            { _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' },
-          ],
-          to: name,
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
-
-    return {
-      success: true,
-      result,
-    };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return {
-      success: false,
-      message: errorMessage,
-    };
-  }
-}
-
-// Batch visibility operations
-async function handleBatchVisibility(): Promise<void> {
-  try {
-    showProgress(true);
-    updateProgress(25);
-
-    const result = await executeBatchVisibility();
-
-    updateProgress(100);
-    showProgress(false);
-
-    if (result.success) {
-      showStatus(`Applied batch visibility to ${result.groupCount} groups`);
-      await commitAndPush('Applied batch visibility changes');
-    } else {
-      showStatus(result.message || 'Unknown error', 'error');
-    }
-  } catch (error) {
-    showProgress(false);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    showStatus(`Error: ${errorMessage}`, 'error');
-    console.error('Batch visibility error:', error);
-  }
-}
-
-async function executeBatchVisibility(): Promise<OperationResult> {
-  // Implementation for batch visibility operations
-  return { success: true, groupCount: 0 };
-}
-
 // Image replacement functionality
 async function handleImageReplace(): Promise<void> {
   try {
+    if (selectedLayerIds.size === 0) {
+      showStatus('Please select at least one layer', 'error');
+      return;
+    }
+
     showProgress(true);
     updateProgress(10);
 
@@ -702,7 +771,6 @@ async function handleImageReplace(): Promise<void> {
 
     if (result.success) {
       showStatus('Replaced image with automatic dimension matching');
-      await commitAndPush('Replaced image with dimension matching');
     } else {
       showStatus(result.message || 'Unknown error', 'error');
     }
@@ -725,31 +793,37 @@ async function executeImageReplace(): Promise<OperationResult> {
       return { success: false, message: 'No file selected' };
     }
 
-    // Replace the image content while preserving layer properties
-    const result = await app.batchPlay(
-      [
-        {
-          _obj: 'placeEvent',
-          _target: [{ _ref: 'layer', _enum: 'ordinal', _value: 'targetEnum' }],
-          null: {
-            _path: file.nativePath,
-            _kind: 'local',
+    const layerIds = Array.from(selectedLayerIds);
+    
+    // Replace the first selected layer
+    if (layerIds.length > 0) {
+      const result = await app.batchPlay(
+        [
+          {
+            _obj: 'placeEvent',
+            _target: [{ _ref: 'layer', _id: layerIds[0] }],
+            null: {
+              _path: file.nativePath,
+              _kind: 'local',
+            },
+            freeTransformCenterState: {
+              _enum: 'quadCenterState',
+              _value: 'QCSAverage',
+            },
+            offset: {
+              _obj: 'offset',
+              horizontal: { _unit: 'pixelsUnit', _value: 0 },
+              vertical: { _unit: 'pixelsUnit', _value: 0 },
+            },
           },
-          freeTransformCenterState: {
-            _enum: 'quadCenterState',
-            _value: 'QCSAverage',
-          },
-          offset: {
-            _obj: 'offset',
-            horizontal: { _unit: 'pixelsUnit', _value: 0 },
-            vertical: { _unit: 'pixelsUnit', _value: 0 },
-          },
-        },
-      ],
-      { modalBehavior: 'execute' }
-    );
+        ],
+        { modalBehavior: 'execute' }
+      );
 
-    return { success: true, result };
+      return { success: true, result };
+    }
+
+    return { success: false, message: 'No layers selected' };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return { success: false, message: errorMessage };
@@ -835,49 +909,8 @@ async function createGroupFromSuggestion(suggestion: GroupingSuggestion): Promis
   );
 }
 
-// Version control integration
-async function commitAndPush(message: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    // Simplified version control - in full implementation, integrate with Git
-    console.log(`Committing changes: ${message}`);
-
-    // Simulate commit and push operations
-    const commitResult = await simulateGitCommit(message);
-    if (commitResult.success) {
-      const pushResult = await simulateGitPush();
-      if (!pushResult.success) {
-        // Retry logic for failed pushes
-        for (let i = 0; i < 3; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
-          const retryResult = await simulateGitPush();
-          if (retryResult.success) break;
-        }
-      }
-    }
-
-    return { success: true };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Version control error:', error);
-    return { success: false, error: errorMessage };
-  }
-}
-
-async function simulateGitCommit(message: string): Promise<{ success: boolean; hash?: string }> {
-  // Placeholder for actual Git integration
-  console.log(`Git commit: ${message}`);
-  return { success: true, hash: 'abc123' };
-}
-
-async function simulateGitPush(): Promise<{ success: boolean }> {
-  // Placeholder for actual Git push
-  console.log('Git push completed');
-  return { success: true };
-}
-
 // Export for testing
 export {
-  executeOneClickGroup,
   executeBulkColorText,
   executeBulkColorShapes,
   executeImageReplace,
