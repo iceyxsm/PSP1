@@ -1,9 +1,8 @@
 /**
  * PSP1 - Layer Manager Pro Styles
- * Dark theme with Spectrum Web Components
+ * Fixed layout for Spectrum components
  */
 
-/* Base Styles */
 * {
   box-sizing: border-box;
 }
@@ -11,48 +10,44 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: "Adobe Clean", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 12px;
-  line-height: 1.5;
+  font-family: adobe-clean, sans-serif;
+  font-size: 14px;
   overflow: hidden;
 }
 
 .wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  height: 100%;
   padding: 16px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 1px solid var(--spectrum-global-color-gray-400);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 /* Sections */
 .section {
-  margin-bottom: 16px;
-  background: var(--spectrum-global-color-gray-200);
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 4px;
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .section-content {
@@ -61,11 +56,11 @@ body {
   gap: 8px;
 }
 
-/* Button Groups */
+/* Button Rows */
 .button-row {
   display: flex;
   gap: 8px;
-  align-items: center;
+  width: 100%;
 }
 
 .button-row sp-button {
@@ -77,10 +72,18 @@ body {
   display: flex;
   gap: 8px;
   align-items: center;
+  width: 100%;
 }
 
 .input-row sp-label {
   min-width: 80px;
+  flex-shrink: 0;
+}
+
+.input-row .color-picker {
+  width: 40px;
+  height: 32px;
+  flex-shrink: 0;
 }
 
 .input-row sp-button {
@@ -91,80 +94,35 @@ body {
 .color-picker {
   width: 40px;
   height: 32px;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 4px;
   cursor: pointer;
-}
-
-/* Progress Bar */
-.progress {
-  width: 100%;
-  height: 4px;
-  background: var(--spectrum-global-color-gray-400);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-top: 12px;
-  display: none;
-}
-
-.progress-bar {
-  height: 100%;
-  background: var(--spectrum-global-color-blue-500);
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-/* Status Messages */
-.status {
-  padding: 8px 12px;
-  margin-top: 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  text-align: center;
-  display: none;
-}
-
-.status.success {
-  background: var(--spectrum-global-color-green-700);
-  color: var(--spectrum-global-color-green-100);
-  border: 1px solid var(--spectrum-global-color-green-600);
-}
-
-.status.error {
-  background: var(--spectrum-global-color-red-700);
-  color: var(--spectrum-global-color-red-100);
-  border: 1px solid var(--spectrum-global-color-red-600);
-}
-
-/* Help Text */
-.help-text {
-  padding: 20px;
-  text-align: center;
-  color: var(--spectrum-global-color-gray-600);
+  background: transparent;
 }
 
 /* Layer List */
 .layer-list {
   max-height: 300px;
+  min-height: 100px;
   overflow-y: auto;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 4px;
-  padding: 4px;
-  background: var(--spectrum-global-color-gray-100);
+  padding: 8px;
+  background: rgba(0,0,0,0.3);
 }
 
 .layer-item {
   display: flex;
   align-items: center;
   padding: 8px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background 0.15s;
+  background: rgba(255,255,255,0.05);
 }
 
 .layer-item:hover {
-  background: var(--spectrum-global-color-gray-300);
+  background: rgba(255,255,255,0.1);
 }
 
 .layer-checkbox {
@@ -172,40 +130,102 @@ body {
   height: 16px;
   margin-right: 8px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .layer-name {
   flex: 1;
-  font-size: 12px;
+  font-size: 13px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
+  color: #e8e8e8;
 }
 
 .layer-type {
   font-size: 10px;
   padding: 2px 6px;
-  background: var(--spectrum-global-color-gray-300);
+  background: rgba(255,255,255,0.1);
   border-radius: 3px;
   margin-left: 8px;
-  color: var(--spectrum-global-color-gray-700);
+  color: #b8b8b8;
+  flex-shrink: 0;
 }
 
-/* Scrollbar Styling */
+/* Help Text */
+.help-text {
+  text-align: center;
+  padding: 20px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Status */
+.status {
+  padding: 8px 12px;
+  margin-top: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+  display: none;
+}
+
+.status.success {
+  background: rgba(0,255,0,0.2);
+  color: #7fd67f;
+  border: 1px solid rgba(0,255,0,0.3);
+}
+
+.status.error {
+  background: rgba(255,0,0,0.2);
+  color: #f67f7f;
+  border: 1px solid rgba(255,0,0,0.3);
+}
+
+/* Progress Bar */
+.progress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  display: none;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #1473e6;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--spectrum-global-color-gray-200);
+  background: rgba(0,0,0,0.2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--spectrum-global-color-gray-400);
-  border-radius: 5px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--spectrum-global-color-gray-500);
+  background: rgba(255,255,255,0.3);
+}
+
+/* Spectrum component overrides */
+sp-button {
+  width: 100%;
+}
+
+sp-textfield {
+  width: 100%;
+}
+
+sp-dropdown {
+  width: 100%;
 }
