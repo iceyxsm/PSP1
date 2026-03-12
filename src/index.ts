@@ -1,6 +1,9 @@
 import { app, constants } from 'photoshop';
 import { entrypoints } from 'uxp';
 import { storage } from 'uxp';
+import { pluginManager } from './plugin-manager';
+import { preferencesManager } from './preferences-manager';
+import { performanceMonitor } from './performance-monitor';
 
 // Type definitions
 interface PluginState {
@@ -55,8 +58,19 @@ let progressBar: HTMLElement | null;
 entrypoints.setup({
   panels: {
     layerManagerPanel: {
-      create(rootNode: HTMLElement): Promise<void> {
+      async create(rootNode: HTMLElement): Promise<void> {
         console.log('Layer Manager Pro panel created');
+        
+        // Initialize plugin manager
+        const initResult = await pluginManager.initialize();
+        
+        if (!initResult.success) {
+          console.error('Plugin initialization failed:', initResult.errors);
+          showStatus('Plugin initialization failed', 'error');
+        } else if (initResult.warnings.length > 0) {
+          console.warn('Plugin initialized with warnings:', initResult.warnings);
+        }
+        
         initializeUI();
         return Promise.resolve();
       },
@@ -69,8 +83,9 @@ entrypoints.setup({
         console.log('Layer Manager Pro panel hidden');
         return Promise.resolve();
       },
-      destroy(rootNode: HTMLElement): Promise<void> {
+      async destroy(rootNode: HTMLElement): Promise<void> {
         console.log('Layer Manager Pro panel destroyed');
+        await pluginManager.shutdown();
         return Promise.resolve();
       },
     },
