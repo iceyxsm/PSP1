@@ -4,29 +4,29 @@ Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operation
 
 ## Features
 
-### 🗂️ One-Tap Layer Grouping
+###  One-Tap Layer Grouping
 - Select multiple layers and create groups with a single click
 - Intelligent auto-grouping based on content similarity and spatial relationships
 - Automatic group naming based on layer content analysis
 
-### 🎨 Bulk Styling Operations
+###  Bulk Styling Operations
 - **Text Color Management**: Change colors for all text layers in a group simultaneously
 - **Shape Color Management**: Apply colors to icons and shapes with one tap
 - **Font Management**: Change fonts across multiple text layers automatically
 - **Auto Outline Generation**: Apply consistent stroke effects to selected elements
 
-### 👁️ Enhanced Group Management
+###  Enhanced Group Management
 - One-click visibility toggle for groups
 - Batch visibility operations for multiple groups
 - Smart group renaming with auto-complete suggestions
 - Keyboard shortcuts for power users
 
-### 🖼️ Image Replacement Tools
+###  Image Replacement Tools
 - Tap-select image replacement with automatic dimension matching
 - Preserves layer properties (blend modes, opacity, effects)
 - Maintains positioning and layer stack order
 
-### ⚡ Performance & Integration
+###  Performance & Integration
 - Operations complete within 500ms for up to 50 layers
 - Seamless Photoshop undo/redo integration
 - Automatic version control with Git commits and pushes
@@ -56,17 +56,17 @@ Advanced layer management plugin for Adobe Photoshop 2025 with one-tap operation
 1. Open Photoshop and create/open a document with multiple layers
 2. Open PSP1 panel: Window → Plugins → PSP1 - Layer Manager Pro
 3. Select layers you want to group
-4. Click "🗂️ One-Click Group" to create an organized group
+4. Click " One-Click Group" to create an organized group
 
 ### Bulk Styling
 1. Select a group or multiple layers
 2. Choose a color using the color picker
-3. Click "📝 Text Color" or "🎨 Shape Color" to apply
-4. Use "🔤 Change Font" for typography consistency
+3. Click " Text Color" or " Shape Color" to apply
+4. Use " Change Font" for typography consistency
 
 ### Image Replacement
 1. Select an image layer
-2. Click "🖼️ Replace Image"
+2. Click " Replace Image"
 3. Choose a new image file
 4. The plugin automatically matches dimensions and preserves properties
 
@@ -158,9 +158,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- 📖 [Documentation](https://github.com/iceyxsm/PSP1/wiki)
-- 🐛 [Report Issues](https://github.com/iceyxsm/PSP1/issues)
-- 💬 [Discussions](https://github.com/iceyxsm/PSP1/discussions)
+-  [Documentation](https://github.com/iceyxsm/PSP1/wiki)
+-  [Report Issues](https://github.com/iceyxsm/PSP1/issues)
+-  [Discussions](https://github.com/iceyxsm/PSP1/discussions)
 
 ## Roadmap
 
@@ -177,5 +177,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Advanced spatial clustering
 
 ---
-
-**Made with ❤️ for the Photoshop community**
