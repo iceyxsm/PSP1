@@ -1,0 +1,432 @@
+/**
+ * PSP1 - Layer Manager Pro Styles
+ * Photoshop-consistent design with adaptive theming
+ */
+
+/* Root Variables */
+:root {
+  --primary-color: #0066cc;
+  --primary-hover: #0052a3;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+  --warning-color: #ffc107;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --border-radius: 4px;
+  --transition-speed: 0.2s;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: var(--spacing-lg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  background: var(--uxp-host-background-color, #f5f5f5);
+  color: var(--uxp-host-text-color, #333);
+  overflow-y: auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--uxp-host-border-color, #ddd);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--uxp-host-text-color, #333);
+}
+
+.header .subtitle {
+  margin-top: var(--spacing-xs);
+  font-size: 11px;
+  color: var(--uxp-host-text-color-secondary, #666);
+}
+
+/* Sections */
+.section {
+  margin-bottom: var(--spacing-xl);
+  background: var(--uxp-host-panel-background-color, white);
+  border: 1px solid var(--uxp-host-border-color, #ddd);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.section.collapsible {
+  cursor: pointer;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.section-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--uxp-host-text-color, #333);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.section-title .icon {
+  font-size: 14px;
+}
+
+.collapse-icon {
+  font-size: 10px;
+  transition: transform var(--transition-speed);
+}
+
+.section.collapsed .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.section.collapsed .section-content {
+  display: none;
+}
+
+/* Button Groups */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.button-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+/* Buttons */
+.btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--uxp-host-border-color, #ccc);
+  background: var(--uxp-host-button-background-color, #fff);
+  color: var(--uxp-host-button-text-color, #333);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all var(--transition-speed) ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: var(--uxp-host-button-background-color-hover, #f0f0f0);
+  border-color: var(--uxp-host-border-color-hover, #999);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.btn-success {
+  background: var(--success-color);
+  color: white;
+  border-color: var(--success-color);
+}
+
+.btn-small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 11px;
+}
+
+.btn-icon {
+  padding: var(--spacing-sm);
+  min-width: 32px;
+}
+
+/* Color Picker */
+.color-picker-wrapper {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.color-picker {
+  width: 40px;
+  height: 32px;
+  border: 1px solid var(--uxp-host-border-color, #ccc);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+.recent-colors {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.recent-color {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--uxp-host-border-color, #ccc);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: transform var(--transition-speed);
+}
+
+.recent-color:hover {
+  transform: scale(1.1);
+}
+
+/* Input Fields */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.input-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--uxp-host-text-color, #333);
+}
+
+.input-field {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--uxp-host-border-color, #ccc);
+  border-radius: var(--border-radius);
+  background: var(--uxp-host-input-background-color, white);
+  color: var(--uxp-host-input-text-color, #333);
+  font-size: 12px;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Select Dropdown */
+.select-field {
+  padding: var(--spacing-sm);
+  border: 1px solid var(--uxp-host-border-color, #ccc);
+  border-radius: var(--border-radius);
+  background: var(--uxp-host-input-background-color, white);
+  color: var(--uxp-host-input-text-color, #333);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Progress Bar */
+.progress {
+  width: 100%;
+  height: 4px;
+  background: var(--uxp-host-border-color, #ddd);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: var(--spacing-md);
+  display: none;
+}
+
+.progress.active {
+  display: block;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary-color);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Status Messages */
+.status {
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-md);
+  border-radius: var(--border-radius);
+  font-size: 11px;
+  text-align: center;
+  display: none;
+  animation: slideIn 0.3s ease;
+}
+
+.status.active {
+  display: block;
+}
+
+.status.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.status.warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status.info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* Tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  text-align: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity var(--transition-speed);
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--uxp-host-border-color, #ddd);
+  margin: var(--spacing-md) 0;
+}
+
+/* Help Text */
+.help-text {
+  font-size: 11px;
+  color: var(--uxp-host-text-color-secondary, #666);
+  margin-top: var(--spacing-xs);
+  line-height: 1.4;
+}
+
+/* Keyboard Shortcut Display */
+.keyboard-shortcut {
+  display: inline-block;
+  padding: 2px 6px;
+  background: var(--uxp-host-border-color, #ddd);
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: monospace;
+  margin-left: var(--spacing-sm);
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--uxp-host-background-color, #f5f5f5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--uxp-host-border-color, #ccc);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--uxp-host-border-color-hover, #999);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 300px) {
+  body {
+    padding: var(--spacing-sm);
+  }
+  
+  .section {
+    padding: var(--spacing-sm);
+  }
+  
+  .button-row {
+    flex-direction: column;
+  }
+}
