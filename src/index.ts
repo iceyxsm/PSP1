@@ -227,45 +227,19 @@ async function getAllLayers(): Promise<any[]> {
       throw new Error('No active document');
     }
 
-    // Get layer count
-    const docInfo = await app.batchPlay(
-      [
-        {
-          _obj: 'get',
-          _target: [{ _ref: 'document', _enum: 'ordinal', _value: 'targetEnum' }],
-        },
-      ],
-      {}
-    );
-
-    const numberOfLayers = docInfo[0]?.numberOfLayers || 0;
+    // Get all layers from the active document
+    const allLayers = app.activeDocument.layers;
     const layerData: any[] = [];
 
-    // Get each layer info
-    for (let i = 1; i <= numberOfLayers; i++) {
-      try {
-        const layerInfo = await app.batchPlay(
-          [
-            {
-              _obj: 'get',
-              _target: [{ _ref: 'layer', _index: i }],
-            },
-          ],
-          {}
-        );
-
-        if (layerInfo && layerInfo[0]) {
-          const layer = layerInfo[0];
-          layerData.push({
-            id: layer.layerID || i,
-            name: layer.name || `Layer ${i}`,
-            kind: layer.layerKind || 'pixel',
-            visible: layer.visible !== false,
-          });
-        }
-      } catch (err) {
-        console.log(`Skipping layer ${i}:`, err);
-      }
+    // Map layers to our format
+    for (let i = 0; i < allLayers.length; i++) {
+      const layer = allLayers[i];
+      layerData.push({
+        id: layer.id,
+        name: layer.name,
+        kind: layer.kind,
+        visible: layer.visible,
+      });
     }
 
     return layerData;

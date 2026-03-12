@@ -6,108 +6,105 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="header">
-        <h1>PSP1 - Layer Manager Pro</h1>
-    </div>
-    
-    <!-- Layer Selection Section -->
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">Select Layers</div>
-            <button class="btn btn-small" id="refreshLayers">Refresh</button>
+    <div class="wrapper">
+        <div class="header">
+            <sp-heading size="M">PSP1 - Layer Manager Pro</sp-heading>
         </div>
-        <div class="section-content">
-            <div class="layer-list" id="layerList">
-                <div class="help-text">Click Refresh to load layers</div>
+        
+        <!-- Layer Selection Section -->
+        <div class="section">
+            <div class="section-header">
+                <sp-label>Select Layers</sp-label>
+                <sp-button size="s" id="refreshLayers">Refresh</sp-button>
             </div>
-            <div class="button-row" style="margin-top: 12px;">
-                <button class="btn" id="selectAll" style="flex: 1;">Select All</button>
-                <button class="btn" id="deselectAll" style="flex: 1;">Deselect All</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Group Actions -->
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">Group Actions</div>
-        </div>
-        <div class="section-content">
-            <div class="input-group">
-                <label class="input-label">Group Name (optional)</label>
-                <input type="text" class="input-field" id="groupNameInput" placeholder="Auto-generate if empty" />
-            </div>
-            <button class="btn btn-primary" id="createGroup">Create Group</button>
-            <button class="btn" id="smartAutoGroup">Smart Auto-Group</button>
-        </div>
-    </div>
-    
-    <!-- Bulk Styling -->
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">Bulk Styling</div>
-        </div>
-        <div class="section-content">
-            <div class="button-group">
-                <div class="input-group">
-                    <label class="input-label">Text Color</label>
-                    <div class="button-row">
-                        <input type="color" class="color-picker" id="textColor" value="#000000">
-                        <button class="btn" id="applyTextColor" style="flex: 1;">Apply to Selected</button>
-                    </div>
+            <div class="section-content">
+                <div class="layer-list" id="layerList">
+                    <sp-body class="help-text">Click Refresh to load layers</sp-body>
                 </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Shape Color</label>
-                    <div class="button-row">
-                        <input type="color" class="color-picker" id="shapeColor" value="#000000">
-                        <button class="btn" id="applyShapeColor" style="flex: 1;">Apply to Selected</button>
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <label class="input-label">Font</label>
-                    <select class="select-field" id="fontSelect">
-                        <option value="">Select Font...</option>
-                    </select>
-                    <button class="btn" id="applyFont">Apply Font</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Group Management -->
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">Group Management</div>
-        </div>
-        <div class="section-content">
-            <div class="button-group">
-                <button class="btn" id="toggleVisibility">Toggle Visibility</button>
                 <div class="button-row">
-                    <button class="btn" id="showAll" style="flex: 1;">Show All</button>
-                    <button class="btn" id="hideAll" style="flex: 1;">Hide All</button>
+                    <sp-button id="selectAll">Select All</sp-button>
+                    <sp-button id="deselectAll">Deselect All</sp-button>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Image Tools -->
-    <div class="section">
-        <div class="section-header">
-            <div class="section-title">Image Tools</div>
+        
+        <!-- Group Actions -->
+        <div class="section">
+            <div class="section-header">
+                <sp-label>Group Actions</sp-label>
+            </div>
+            <div class="section-content">
+                <sp-textfield id="groupNameInput" placeholder="Auto-generate if empty">
+                    <sp-label slot="label">Group Name (optional)</sp-label>
+                </sp-textfield>
+                <sp-button variant="cta" id="createGroup">Create Group</sp-button>
+                <sp-button id="smartAutoGroup">Smart Auto-Group</sp-button>
+            </div>
         </div>
-        <div class="section-content">
-            <button class="btn" id="replaceImage">Replace Image</button>
+        
+        <!-- Bulk Styling -->
+        <div class="section">
+            <div class="section-header">
+                <sp-label>Bulk Styling</sp-label>
+            </div>
+            <div class="section-content">
+                <div class="input-row">
+                    <sp-label>Text Color</sp-label>
+                    <input type="color" class="color-picker" id="textColor" value="#000000">
+                    <sp-button id="applyTextColor">Apply to Selected</sp-button>
+                </div>
+                
+                <div class="input-row">
+                    <sp-label>Shape Color</sp-label>
+                    <input type="color" class="color-picker" id="shapeColor" value="#000000">
+                    <sp-button id="applyShapeColor">Apply to Selected</sp-button>
+                </div>
+                
+                <sp-dropdown id="fontSelect" placeholder="Select Font...">
+                    <sp-label slot="label">Font</sp-label>
+                    <sp-menu slot="options">
+                        <sp-menu-item value="Arial">Arial</sp-menu-item>
+                        <sp-menu-item value="Helvetica">Helvetica</sp-menu-item>
+                        <sp-menu-item value="Times New Roman">Times New Roman</sp-menu-item>
+                        <sp-menu-item value="Courier New">Courier New</sp-menu-item>
+                        <sp-menu-item value="Georgia">Georgia</sp-menu-item>
+                    </sp-menu>
+                </sp-dropdown>
+                <sp-button id="applyFont">Apply Font</sp-button>
+            </div>
         </div>
+        
+        <!-- Group Management -->
+        <div class="section">
+            <div class="section-header">
+                <sp-label>Group Management</sp-label>
+            </div>
+            <div class="section-content">
+                <sp-button id="toggleVisibility">Toggle Visibility</sp-button>
+                <div class="button-row">
+                    <sp-button id="showAll">Show All</sp-button>
+                    <sp-button id="hideAll">Hide All</sp-button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Image Tools -->
+        <div class="section">
+            <div class="section-header">
+                <sp-label>Image Tools</sp-label>
+            </div>
+            <div class="section-content">
+                <sp-button id="replaceImage">Replace Image</sp-button>
+            </div>
+        </div>
+        
+        <!-- Progress and Status -->
+        <div class="progress" id="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="status" id="status"></div>
     </div>
-    
-    <!-- Progress and Status -->
-    <div class="progress" id="progress">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-    
-    <div class="status" id="status"></div>
     
     <script src="index.js"></script>
 </body>
