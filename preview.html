@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>PSP1 - UI Preview</title>
+    <title>PSP1 - UI Preview (Responsive)</title>
     <script src="https://opensource.adobe.com/spectrum-web-components/js/theme-darkest.js" type="module"></script>
     <script src="https://opensource.adobe.com/spectrum-web-components/js/scale-medium.js" type="module"></script>
     <script src="https://opensource.adobe.com/spectrum-web-components/js/sp-button.js" type="module"></script>
@@ -13,398 +13,196 @@
     <script src="https://opensource.adobe.com/spectrum-web-components/js/sp-menu.js" type="module"></script>
     <script src="https://opensource.adobe.com/spectrum-web-components/js/sp-menu-item.js" type="module"></script>
     <script src="https://opensource.adobe.com/spectrum-web-components/js/sp-body.js" type="module"></script>
+    <link rel="stylesheet" href="styles.css">
     <style>
-/**
- * PSP1 - Layer Manager Pro Styles
- * Fixed layout for Spectrum components
- */
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: adobe-clean, sans-serif;
-  font-size: 14px;
-  overflow: hidden;
-  background: #2c2c2c;
-  color: #e8e8e8;
-}
-
-.wrapper {
-  width: 100%;
-  height: 100vh;
-  padding: 8px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Header */
-.header {
-  text-align: center;
-  padding-bottom: 4px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.header sp-heading {
-  font-size: 13px;
-}
-
-/* Sections */
-.section {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 4px;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.section-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* Button Rows */
-.button-row {
-  display: flex;
-  gap: 4px;
-  width: 100%;
-}
-
-.button-row sp-button {
-  flex: 1;
-  height: 24px;
-}
-
-/* Input Rows */
-.input-row {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  width: 100%;
-}
-
-.input-row sp-label {
-  min-width: 60px;
-  flex-shrink: 0;
-  font-size: 10px;
-}
-
-.input-row .color-picker {
-  width: 28px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.input-row sp-button {
-  flex: 1;
-  height: 24px;
-}
-
-/* Color Picker */
-.color-picker {
-  width: 28px;
-  height: 24px;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 4px;
-  cursor: pointer;
-  background: transparent;
-}
-
-/* Layer List */
-.layer-list {
-  max-height: 200px;
-  min-height: 60px;
-  overflow-y: auto;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 4px;
-  padding: 4px;
-  background: rgba(0,0,0,0.3);
-}
-
-.layer-item {
-  display: flex;
-  align-items: center;
-  padding: 4px;
-  margin-bottom: 2px;
-  border-radius: 4px;
-  cursor: pointer;
-  background: rgba(255,255,255,0.05);
-}
-
-.layer-item:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-.layer-checkbox {
-  width: 14px;
-  height: 14px;
-  margin-right: 6px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.layer-name {
-  flex: 1;
-  font-size: 11px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
-  color: #e8e8e8;
-}
-
-.layer-type {
-  font-size: 9px;
-  padding: 2px 4px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 3px;
-  margin-left: 6px;
-  color: #b8b8b8;
-  flex-shrink: 0;
-}
-
-/* Help Text */
-.help-text {
-  text-align: center;
-  padding: 10px;
-  color: rgba(255,255,255,0.5);
-  font-size: 11px;
-}
-
-/* Status */
-.status {
-  padding: 6px 8px;
-  margin-top: 4px;
-  border-radius: 4px;
-  font-size: 10px;
-  text-align: center;
-  display: none;
-}
-
-.status.success {
-  background: rgba(0,255,0,0.2);
-  color: #7fd67f;
-  border: 1px solid rgba(0,255,0,0.3);
-}
-
-.status.error {
-  background: rgba(255,0,0,0.2);
-  color: #f67f7f;
-  border: 1px solid rgba(255,0,0,0.3);
-}
-
-/* Progress Bar */
-.progress {
-  width: 100%;
-  height: 4px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 2px;
-  overflow: hidden;
-  display: none;
-}
-
-.progress-bar {
-  height: 100%;
-  background: #1473e6;
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.2);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.3);
-}
-
-/* Spectrum component overrides */
-sp-button {
-  width: 100%;
-  height: 24px;
-  font-size: 11px;
-}
-
-sp-button[size="s"] {
-  height: 20px;
-  font-size: 10px;
-}
-
-sp-textfield {
-  width: 100%;
-  height: 24px;
-  font-size: 11px;
-}
-
-sp-dropdown {
-  width: 100%;
-  height: 24px;
-  font-size: 11px;
-}
-
-sp-label {
-  font-size: 11px;
-}
-
-sp-heading {
-  font-size: 13px;
-}
+        body {
+            background: #2c2c2c;
+            color: #e8e8e8;
+        }
+        
+        /* Preview controls */
+        .preview-controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 4px;
+            z-index: 1000;
+            font-size: 11px;
+        }
+        
+        .preview-controls button {
+            margin: 2px;
+            padding: 4px 8px;
+            background: #1473e6;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        
+        .preview-controls button:hover {
+            background: #0d66d0;
+        }
+        
+        /* Resizable container */
+        .preview-container {
+            width: 280px;
+            height: 100vh;
+            margin: 0 auto;
+            border-left: 2px solid #1473e6;
+            border-right: 2px solid #1473e6;
+            position: relative;
+            resize: horizontal;
+            overflow: auto;
+        }
     </style>
 </head>
 <body>
-    <sp-theme theme="darkest" scale="medium">
-        <div class="wrapper">
-            <div class="header">
-                <sp-heading size="M">PSP1 - Layer Manager Pro</sp-heading>
-            </div>
-            
-            <!-- Layer Selection Section -->
-            <div class="section">
-                <div class="section-header">
-                    <sp-label>Select Layers</sp-label>
-                    <sp-button size="s" id="refreshLayers">Refresh</sp-button>
+    <div class="preview-controls">
+        <div>Resize panel width:</div>
+        <button onclick="setWidth(230)">230px (min)</button>
+        <button onclick="setWidth(280)">280px</button>
+        <button onclick="setWidth(400)">400px</button>
+        <button onclick="setWidth(600)">600px</button>
+    </div>
+    
+    <div class="preview-container" id="container">
+        <sp-theme theme="darkest" scale="medium">
+            <div class="wrapper">
+                <div class="header">
+                    <sp-heading size="M">PSP1 - Layer Manager Pro</sp-heading>
                 </div>
-                <div class="section-content">
-                    <div class="layer-list" id="layerList">
-                        <!-- Sample layers for preview -->
-                        <div class="layer-item">
-                            <input type="checkbox" class="layer-checkbox" id="layer-1">
-                            <label for="layer-1" class="layer-name">Background Image</label>
-                            <span class="layer-type">pixel</span>
+                
+                <!-- Layer Selection Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <sp-label>Select Layers</sp-label>
+                        <sp-button size="s" id="refreshLayers">Refresh</sp-button>
+                    </div>
+                    <div class="section-content">
+                        <div class="layer-list" id="layerList">
+                            <!-- Sample layers for preview -->
+                            <div class="layer-item">
+                                <input type="checkbox" class="layer-checkbox" id="layer-1">
+                                <label for="layer-1" class="layer-name">Background Image</label>
+                                <span class="layer-type">pixel</span>
+                            </div>
+                            <div class="layer-item">
+                                <input type="checkbox" class="layer-checkbox" id="layer-2" checked>
+                                <label for="layer-2" class="layer-name">Header Text</label>
+                                <span class="layer-type">text</span>
+                            </div>
+                            <div class="layer-item">
+                                <input type="checkbox" class="layer-checkbox" id="layer-3">
+                                <label for="layer-3" class="layer-name">Button Shape</label>
+                                <span class="layer-type">shape</span>
+                            </div>
+                            <div class="layer-item">
+                                <input type="checkbox" class="layer-checkbox" id="layer-4" checked>
+                                <label for="layer-4" class="layer-name">Logo</label>
+                                <span class="layer-type">smartObject</span>
+                            </div>
+                            <div class="layer-item">
+                                <input type="checkbox" class="layer-checkbox" id="layer-5">
+                                <label for="layer-5" class="layer-name">Footer Background</label>
+                                <span class="layer-type">shape</span>
+                            </div>
                         </div>
-                        <div class="layer-item">
-                            <input type="checkbox" class="layer-checkbox" id="layer-2" checked>
-                            <label for="layer-2" class="layer-name">Header Text</label>
-                            <span class="layer-type">text</span>
-                        </div>
-                        <div class="layer-item">
-                            <input type="checkbox" class="layer-checkbox" id="layer-3">
-                            <label for="layer-3" class="layer-name">Button Shape</label>
-                            <span class="layer-type">shape</span>
-                        </div>
-                        <div class="layer-item">
-                            <input type="checkbox" class="layer-checkbox" id="layer-4" checked>
-                            <label for="layer-4" class="layer-name">Logo</label>
-                            <span class="layer-type">smartObject</span>
-                        </div>
-                        <div class="layer-item">
-                            <input type="checkbox" class="layer-checkbox" id="layer-5">
-                            <label for="layer-5" class="layer-name">Footer Background</label>
-                            <span class="layer-type">shape</span>
+                        <div class="button-row">
+                            <sp-button id="selectAll">Select All</sp-button>
+                            <sp-button id="deselectAll">Deselect All</sp-button>
                         </div>
                     </div>
-                    <div class="button-row">
-                        <sp-button id="selectAll">Select All</sp-button>
-                        <sp-button id="deselectAll">Deselect All</sp-button>
+                </div>
+                
+                <!-- Group Actions -->
+                <div class="section">
+                    <div class="section-header">
+                        <sp-label>Group Actions</sp-label>
+                    </div>
+                    <div class="section-content">
+                        <sp-textfield id="groupNameInput" placeholder="Auto-generate if empty">
+                            <sp-label slot="label">Group Name (optional)</sp-label>
+                        </sp-textfield>
+                        <sp-button variant="cta" id="createGroup">Create Group</sp-button>
+                        <sp-button id="smartAutoGroup">Smart Auto-Group</sp-button>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Group Actions -->
-            <div class="section">
-                <div class="section-header">
-                    <sp-label>Group Actions</sp-label>
-                </div>
-                <div class="section-content">
-                    <sp-textfield id="groupNameInput" placeholder="Auto-generate if empty">
-                        <sp-label slot="label">Group Name (optional)</sp-label>
-                    </sp-textfield>
-                    <sp-button variant="cta" id="createGroup">Create Group</sp-button>
-                    <sp-button id="smartAutoGroup">Smart Auto-Group</sp-button>
-                </div>
-            </div>
-            
-            <!-- Bulk Styling -->
-            <div class="section">
-                <div class="section-header">
-                    <sp-label>Bulk Styling</sp-label>
-                </div>
-                <div class="section-content">
-                    <div class="input-row">
-                        <sp-label>Text Color</sp-label>
-                        <input type="color" class="color-picker" id="textColor" value="#000000">
-                        <sp-button id="applyTextColor">Apply to Selected</sp-button>
+                
+                <!-- Bulk Styling -->
+                <div class="section">
+                    <div class="section-header">
+                        <sp-label>Bulk Styling</sp-label>
                     </div>
-                    
-                    <div class="input-row">
-                        <sp-label>Shape Color</sp-label>
-                        <input type="color" class="color-picker" id="shapeColor" value="#000000">
-                        <sp-button id="applyShapeColor">Apply to Selected</sp-button>
-                    </div>
-                    
-                    <sp-dropdown id="fontSelect" placeholder="Select Font...">
-                        <sp-label slot="label">Font</sp-label>
-                        <sp-menu slot="options">
-                            <sp-menu-item value="Arial">Arial</sp-menu-item>
-                            <sp-menu-item value="Helvetica">Helvetica</sp-menu-item>
-                            <sp-menu-item value="Times New Roman">Times New Roman</sp-menu-item>
-                            <sp-menu-item value="Courier New">Courier New</sp-menu-item>
-                            <sp-menu-item value="Georgia">Georgia</sp-menu-item>
-                        </sp-menu>
-                    </sp-dropdown>
-                    <sp-button id="applyFont">Apply Font</sp-button>
-                </div>
-            </div>
-            
-            <!-- Group Management -->
-            <div class="section">
-                <div class="section-header">
-                    <sp-label>Group Management</sp-label>
-                </div>
-                <div class="section-content">
-                    <sp-button id="toggleVisibility">Toggle Visibility</sp-button>
-                    <div class="button-row">
-                        <sp-button id="showAll">Show All</sp-button>
-                        <sp-button id="hideAll">Hide All</sp-button>
+                    <div class="section-content">
+                        <div class="input-row">
+                            <sp-label>Text Color</sp-label>
+                            <input type="color" class="color-picker" id="textColor" value="#000000">
+                            <sp-button id="applyTextColor">Apply to Selected</sp-button>
+                        </div>
+                        
+                        <div class="input-row">
+                            <sp-label>Shape Color</sp-label>
+                            <input type="color" class="color-picker" id="shapeColor" value="#000000">
+                            <sp-button id="applyShapeColor">Apply to Selected</sp-button>
+                        </div>
+                        
+                        <sp-dropdown id="fontSelect" placeholder="Select Font...">
+                            <sp-label slot="label">Font</sp-label>
+                            <sp-menu slot="options">
+                                <sp-menu-item value="Arial">Arial</sp-menu-item>
+                                <sp-menu-item value="Helvetica">Helvetica</sp-menu-item>
+                                <sp-menu-item value="Times New Roman">Times New Roman</sp-menu-item>
+                                <sp-menu-item value="Courier New">Courier New</sp-menu-item>
+                                <sp-menu-item value="Georgia">Georgia</sp-menu-item>
+                            </sp-menu>
+                        </sp-dropdown>
+                        <sp-button id="applyFont">Apply Font</sp-button>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Image Tools -->
-            <div class="section">
-                <div class="section-header">
-                    <sp-label>Image Tools</sp-label>
+                
+                <!-- Group Management -->
+                <div class="section">
+                    <div class="section-header">
+                        <sp-label>Group Management</sp-label>
+                    </div>
+                    <div class="section-content">
+                        <sp-button id="toggleVisibility">Toggle Visibility</sp-button>
+                        <div class="button-row">
+                            <sp-button id="showAll">Show All</sp-button>
+                            <sp-button id="hideAll">Hide All</sp-button>
+                        </div>
+                    </div>
                 </div>
-                <div class="section-content">
-                    <sp-button id="replaceImage">Replace Image</sp-button>
+                
+                <!-- Image Tools -->
+                <div class="section">
+                    <div class="section-header">
+                        <sp-label>Image Tools</sp-label>
+                    </div>
+                    <div class="section-content">
+                        <sp-button id="replaceImage">Replace Image</sp-button>
+                    </div>
                 </div>
+                
+                <!-- Progress and Status -->
+                <div class="progress" id="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="status success" id="status" style="display: block;">Responsive Preview - Resize panel to test</div>
             </div>
-            
-            <!-- Progress and Status -->
-            <div class="progress" id="progress">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            
-            <div class="status success" id="status" style="display: block;">Preview Mode - Sample layers shown</div>
-        </div>
-    </sp-theme>
+        </sp-theme>
+    </div>
     
     <script>
+        function setWidth(width) {
+            document.getElementById('container').style.width = width + 'px';
+        }
+        
         // Simple preview interactions
         document.getElementById('selectAll')?.addEventListener('click', () => {
             document.querySelectorAll('.layer-checkbox').forEach(cb => cb.checked = true);

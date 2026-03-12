@@ -1,6 +1,7 @@
 /**
  * PSP1 - Layer Manager Pro Styles
- * Fixed layout for Spectrum components
+ * Responsive layout optimized for UXP panels
+ * Supports panel widths from 230px (minimum) to 2000px (maximum)
  */
 
 * {
@@ -18,8 +19,10 @@ body {
 .wrapper {
   width: 100%;
   height: 100%;
+  min-width: 230px;
   padding: 8px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -30,10 +33,14 @@ body {
   text-align: center;
   padding-bottom: 4px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
 }
 
 .header sp-heading {
   font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Sections */
@@ -45,6 +52,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .section-header {
@@ -52,38 +61,53 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+}
+
+.section-header sp-label {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .section-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
-/* Button Rows */
+/* Button Rows - Responsive wrapping */
 .button-row {
   display: flex;
   gap: 4px;
   width: 100%;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .button-row sp-button {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 80px;
   height: 24px;
 }
 
-/* Input Rows */
+/* Input Rows - Responsive layout */
 .input-row {
   display: flex;
   gap: 4px;
   align-items: center;
   width: 100%;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .input-row sp-label {
   min-width: 60px;
   flex-shrink: 0;
   font-size: 10px;
+  white-space: nowrap;
 }
 
 .input-row .color-picker {
@@ -93,7 +117,8 @@ body {
 }
 
 .input-row sp-button {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 100px;
   height: 24px;
 }
 
@@ -107,15 +132,17 @@ body {
   background: transparent;
 }
 
-/* Layer List */
+/* Layer List - Responsive height */
 .layer-list {
   max-height: 200px;
   min-height: 60px;
   overflow-y: auto;
+  overflow-x: hidden;
   border: 1px solid rgba(255,255,255,0.2);
   border-radius: 4px;
   padding: 4px;
   background: rgba(0,0,0,0.3);
+  width: 100%;
 }
 
 .layer-item {
@@ -126,6 +153,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
   background: rgba(255,255,255,0.05);
+  min-width: 0;
 }
 
 .layer-item:hover {
@@ -141,13 +169,14 @@ body {
 }
 
 .layer-name {
-  flex: 1;
+  flex: 1 1 auto;
   font-size: 11px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
   color: #e8e8e8;
+  min-width: 0;
 }
 
 .layer-type {
@@ -225,26 +254,33 @@ body {
   background: rgba(255,255,255,0.3);
 }
 
-/* Spectrum component overrides */
+/* Spectrum component overrides - Responsive sizing */
 sp-button {
   width: 100%;
+  min-width: 0;
   height: 24px;
   font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 sp-button[size="s"] {
   height: 20px;
   font-size: 10px;
+  min-width: 60px;
 }
 
 sp-textfield {
   width: 100%;
+  min-width: 0;
   height: 24px;
   font-size: 11px;
 }
 
 sp-dropdown {
   width: 100%;
+  min-width: 0;
   height: 24px;
   font-size: 11px;
 }
@@ -255,4 +291,49 @@ sp-label {
 
 sp-heading {
   font-size: 13px;
+}
+
+/* Media queries for different panel widths */
+@media (max-width: 280px) {
+  .wrapper {
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .section {
+    padding: 4px;
+  }
+  
+  .input-row sp-label {
+    min-width: 50px;
+    font-size: 9px;
+  }
+  
+  .button-row sp-button {
+    min-width: 60px;
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 400px) {
+  .wrapper {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .section {
+    padding: 8px;
+  }
+  
+  sp-button {
+    font-size: 12px;
+  }
+  
+  sp-label {
+    font-size: 12px;
+  }
+  
+  .layer-name {
+    font-size: 12px;
+  }
 }
