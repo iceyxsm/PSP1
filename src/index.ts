@@ -227,31 +227,45 @@ async function getAllLayers(): Promise<any[]> {
       throw new Error('No active document');
     }
 
-    const result = await app.batchPlay(
+    // Get layer count
+    const docInfo = await app.batchPlay(
       [
         {
           _obj: 'get',
-          _target: [
-            { _property: 'layer' },
-            { _ref: 'document', _id: app.activeDocument.id },
-          ],
+          _target: [{ _ref: 'document', _enum: 'ordinal', _value: 'targetEnum' }],
         },
       ],
       {}
     );
 
-    // Get all layers from the document
-    const layers = app.activeDocument.layers;
+    const numberOfLayers = docInfo[0]?.numberOfLayers || 0;
     const layerData: any[] = [];
 
-    for (let i = 0; i < layers.length; i++) {
-      const layer = layers[i];
-      layerData.push({
-        id: layer.id,
-        name: layer.name,
-        kind: layer.kind,
-        visible: layer.visible,
-      });
+    // Get each layer info
+    for (let i = 1; i <= numberOfLayers; i++) {
+      try {
+        const layerInfo = await app.batchPlay(
+          [
+            {
+              _obj: 'get',
+              _target: [{ _ref: 'layer', _index: i }],
+            },
+          ],
+          {}
+        );
+
+        if (layerInfo && layerInfo[0]) {
+          const layer = layerInfo[0];
+          layerData.push({
+            id: layer.layerID || i,
+            name: layer.name || `Layer ${i}`,
+            kind: layer.layerKind || 'pixel',
+            visible: layer.visible !== false,
+          });
+        }
+      } catch (err) {
+        console.log(`Skipping layer ${i}:`, err);
+      }
     }
 
     return layerData;
@@ -414,7 +428,16 @@ async function handleShowAll(): Promise<void> {
     showProgress(true);
     updateProgress(50);
 
-    await setAllLayersVisibility(true);
+    // Show all layers using batchPlay
+    await app.batchPlay(
+      [
+        {
+          _obj: 'show',
+          _target: [{ _ref: 'layer', _enum: 'ordinal', _value: 'allEnum' }],
+        },
+      ],
+      { modalBehavior: 'execute' }
+    );
 
     updateProgress(100);
     showProgress(false);
@@ -432,7 +455,16 @@ async function handleHideAll(): Promise<void> {
     showProgress(true);
     updateProgress(50);
 
-    await setAllLayersVisibility(false);
+    // Hide all layers using batchPlay
+    await app.batchPlay(
+      [
+        {
+          _obj: 'hide',
+          _target: [{ _ref: 'layer', _enum: 'ordinal', _value: 'allEnum' }],
+        },
+      ],
+      { modalBehavior: 'execute' }
+    );
 
     updateProgress(100);
     showProgress(false);
@@ -446,10 +478,7 @@ async function handleHideAll(): Promise<void> {
 }
 
 async function setAllLayersVisibility(visible: boolean): Promise<void> {
-  const layers = app.activeDocument.layers;
-  for (let i = 0; i < layers.length; i++) {
-    layers[i].visible = visible;
-  }
+  // Not used anymore, kept for compatibility
 }
 
 // Auto-grouping with intelligence
@@ -735,9 +764,32 @@ async function handleToggleVisibility(): Promise<void> {
 
     const layerIds = Array.from(selectedLayerIds);
     for (const layerId of layerIds) {
-      const layer = app.activeDocument.layers.find((l: any) => l.id === layerId);
-      if (layer) {
-        layer.visible = !layer.visible;
+      try {
+        // Get current visibility
+        const layerInfo = await app.batchPlay(
+          [
+            {
+              _obj: 'get',
+              _target: [{ _ref: 'layer', _id: layerId }],
+            },
+          ],
+          {}
+        );
+
+        const isVisible = layerInfo[0]?.visible !== false;
+
+        // Toggle visibility
+        await app.batchPlay(
+          [
+            {
+              _obj: isVisible ? 'hide' : 'show',
+              _target: [{ _ref: 'layer', _id: layerId }],
+            },
+          ],
+          { modalBehavior: 'execute' }
+        );
+      } catch (err) {
+        console.log(`Failed to toggle layer ${layerId}:`, err);
       }
     }
 
