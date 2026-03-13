@@ -22,15 +22,56 @@ entrypoints.setup({
 
 // Initialize UI
 function initializeUI() {
-  console.log('Initializing UI...');
+  console.log('=== PSP1 INITIALIZING UI ===');
+  console.log('DOM loaded, checking elements...');
+  
+  // Force show all buttons with inline styles
+  const allButtons = document.querySelectorAll('button');
+  console.log(`Found ${allButtons.length} buttons total`);
+  
+  allButtons.forEach((btn, index) => {
+    console.log(`Button ${index}: id="${btn.id}", text="${btn.textContent}", display="${getComputedStyle(btn).display}"`);
+    // Force visibility
+    btn.style.display = 'block';
+    btn.style.visibility = 'visible';
+    btn.style.opacity = '1';
+  });
+  
+  // Check if elements exist
+  const createGroupBtn = document.getElementById('createGroup');
+  const smartAutoGroupBtn = document.getElementById('smartAutoGroup');
+  const buttonGroup = document.querySelector('.button-group');
+  
+  console.log('=== BUTTON CHECK ===');
+  console.log('Create Group button:', createGroupBtn);
+  console.log('Smart Auto Group button:', smartAutoGroupBtn);
+  console.log('Button group container:', buttonGroup);
+  
+  if (!createGroupBtn) {
+    console.error('❌ Create Group button not found!');
+  } else {
+    console.log('✅ Create Group button found');
+    console.log('Button styles:', {
+      display: getComputedStyle(createGroupBtn).display,
+      visibility: getComputedStyle(createGroupBtn).visibility,
+      opacity: getComputedStyle(createGroupBtn).opacity,
+      position: getComputedStyle(createGroupBtn).position
+    });
+  }
+  
+  if (!smartAutoGroupBtn) {
+    console.error('❌ Smart Auto Group button not found!');
+  } else {
+    console.log('✅ Smart Auto Group button found');
+  }
   
   // Refresh button
   const refreshBtn = document.getElementById('refreshLayers');
   if (refreshBtn) {
     refreshBtn.addEventListener('click', handleRefreshLayers);
-    console.log('Refresh button bound');
+    console.log('✅ Refresh button bound');
   } else {
-    console.log('Refresh button not found!');
+    console.error('❌ Refresh button not found!');
   }
   
   // Select All / Deselect All
@@ -42,8 +83,29 @@ function initializeUI() {
   document.getElementById('selectLayers')?.addEventListener('click', handleSelectLayers);
   
   // Create Group
-  document.getElementById('createGroup')?.addEventListener('click', handleCreateGroup);
-  document.getElementById('smartAutoGroup')?.addEventListener('click', handleAutoGroup);
+  if (createGroupBtn) {
+    createGroupBtn.addEventListener('click', handleCreateGroup);
+    console.log('✅ Create Group button event bound');
+    // Force button to be visible and clickable
+    createGroupBtn.style.display = 'block !important';
+    createGroupBtn.style.visibility = 'visible !important';
+    createGroupBtn.style.opacity = '1 !important';
+    createGroupBtn.style.pointerEvents = 'auto !important';
+  } else {
+    console.error('❌ CRITICAL: Create Group button not found for event binding!');
+  }
+  
+  if (smartAutoGroupBtn) {
+    smartAutoGroupBtn.addEventListener('click', handleAutoGroup);
+    console.log('✅ Smart Auto Group button event bound');
+    // Force button to be visible and clickable
+    smartAutoGroupBtn.style.display = 'block !important';
+    smartAutoGroupBtn.style.visibility = 'visible !important';
+    smartAutoGroupBtn.style.opacity = '1 !important';
+    smartAutoGroupBtn.style.pointerEvents = 'auto !important';
+  } else {
+    console.error('❌ CRITICAL: Smart Auto Group button not found for event binding!');
+  }
   
   // Color wheel and hex input synchronization
   setupColorControls('textColor', '#000000');
@@ -81,7 +143,8 @@ function initializeUI() {
     }
   }, 500);
   
-  console.log('UI initialized');
+  console.log('=== UI INITIALIZATION COMPLETE ===');
+  console.log('All event handlers bound, buttons forced visible');
 }
 
 // Setup color controls with synchronization
@@ -331,16 +394,25 @@ function handleSelectLayers() {
 
 // Create Group
 async function handleCreateGroup() {
+  console.log('🚀 CREATE GROUP BUTTON CLICKED!');
+  
   if (selectedLayerIds.size === 0) {
+    console.log('❌ No layers selected');
     showStatus('Please select at least one layer', 'error');
     return;
   }
   
+  console.log(`📋 Selected layers: ${Array.from(selectedLayerIds).join(', ')}`);
+  
   try {
     showProgress(true);
+    showStatus('Creating group...');
+    
     await require('photoshop').core.executeAsModal(async () => {
       const groupName = document.getElementById('groupNameInput')?.value || `Group ${new Date().toLocaleTimeString()}`;
       const layerIds = Array.from(selectedLayerIds);
+      
+      console.log(`📁 Creating group "${groupName}" with layers:`, layerIds);
       
       await require('photoshop').action.batchPlay([{
         _obj: 'make',
@@ -349,12 +421,14 @@ async function handleCreateGroup() {
         name: groupName
       }], { modalBehavior: 'execute' });
       
+      console.log('✅ Group created successfully');
       showStatus(`Created group "${groupName}"`);
       selectedLayerIds.clear();
       document.getElementById('groupNameInput').value = '';
       await handleRefreshLayers();
     }, { commandName: 'Create Group' });
   } catch (error) {
+    console.error('❌ Create Group Error:', error);
     showStatus(`Error: ${error.message}`, 'error');
   } finally {
     showProgress(false);
@@ -580,4 +654,18 @@ function hexToRgb(hex) {
   } : { r: 0, g: 0, b: 0 };
 }
 
-console.log('PSP1 plugin loaded with enhanced UI');
+console.log('🎉 PSP1 plugin loaded with enhanced UI and debugging');
+console.log('📍 Plugin version: 1.0.3');
+console.log('🔧 If Create Group button is missing, check the console for errors');
+
+// Add a global test function for debugging
+window.testCreateGroup = function() {
+  console.log('🧪 Testing Create Group button...');
+  const btn = document.getElementById('createGroup');
+  if (btn) {
+    console.log('✅ Button found, triggering click...');
+    btn.click();
+  } else {
+    console.error('❌ Button not found!');
+  }
+};
