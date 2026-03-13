@@ -29,11 +29,17 @@ function initializeUI() {
   if (refreshBtn) {
     refreshBtn.addEventListener('click', handleRefreshLayers);
     console.log('Refresh button bound');
+  } else {
+    console.log('Refresh button not found!');
   }
   
   // Select All / Deselect All
   document.getElementById('selectAll')?.addEventListener('click', handleSelectAll);
   document.getElementById('deselectAll')?.addEventListener('click', handleDeselectAll);
+  
+  // Groups Only / Layers Only
+  document.getElementById('selectGroups')?.addEventListener('click', handleSelectGroups);
+  document.getElementById('selectLayers')?.addEventListener('click', handleSelectLayers);
   
   // Create Group
   document.getElementById('createGroup')?.addEventListener('click', handleCreateGroup);
@@ -58,6 +64,22 @@ function initializeUI() {
   
   // Update selection info periodically
   setInterval(updateSelectionInfo, 1000);
+  
+  // Auto-load layers on startup
+  setTimeout(() => {
+    console.log('Attempting to auto-load layers...');
+    try {
+      if (app && app.activeDocument) {
+        console.log('Active document found, loading layers...');
+        handleRefreshLayers();
+      } else {
+        console.log('No active document found');
+        showStatus('Open a document to see layers', 'error');
+      }
+    } catch (error) {
+      console.log('Error during auto-load:', error);
+    }
+  }, 500);
   
   console.log('UI initialized');
 }
@@ -150,6 +172,18 @@ function updateSelectionInfo() {
     countElement.textContent = `${selectedLayerIds.size} selected`;
   }
   
+  // Show layer types in selection
+  if (typesElement && selectedLayerIds.size > 0) {
+    const types = new Set();
+    document.querySelectorAll('.layer-checkbox:checked').forEach(cb => {
+      const layerType = cb.closest('.layer-item')?.querySelector('.layer-type')?.textContent;
+      if (layerType) types.add(layerType);
+    });
+    typesElement.textContent = Array.from(types).join(', ');
+  } else if (typesElement) {
+    typesElement.textContent = '';
+  }
+  
   // Update color targets
   updateColorTarget('textColor');
   updateColorTarget('shapeColor');
@@ -213,7 +247,20 @@ async function handleRefreshLayers() {
       
       const type = document.createElement('span');
       type.className = 'layer-type';
-      type.textContent = layer.kind || 'layer';
+      // Better layer type detection
+      let layerType = layer.kind || 'layer';
+      if (layer.typename === 'LayerSet' || layerType === 'layerSection') {
+        layerType = 'group';
+      } else if (layerType === 'textLayer') {
+        layerType = 'text';
+      } else if (layerType === 'shapeLayer') {
+        layerType = 'shape';
+      } else if (layerType === 'smartObjectLayer') {
+        layerType = 'smart';
+      } else if (layerType === 'normalLayer') {
+        layerType = 'image';
+      }
+      type.textContent = layerType;
       
       item.appendChild(checkbox);
       item.appendChild(label);
@@ -245,6 +292,41 @@ function handleDeselectAll() {
   selectedLayerIds.clear();
   updateSelectionInfo();
   showStatus('Deselected all layers');
+}
+
+// Select Groups Only / Layers Only
+function handleSelectGroups() {
+  document.querySelectorAll('.layer-checkbox').forEach(cb => {
+    const layerType = cb.closest('.layer-item')?.querySelector('.layer-type')?.textContent;
+    const layerId = parseInt(cb.id.replace('layer-', ''));
+    
+    if (layerType === 'layerSection' || layerType === 'group') {
+      cb.checked = true;
+      selectedLayerIds.add(layerId);
+    } else {
+      cb.checked = false;
+      selectedLayerIds.delete(layerId);
+    }
+  });
+  updateSelectionInfo();
+  showStatus(`Selected ${selectedLayerIds.size} groups`);
+}
+
+function handleSelectLayers() {
+  document.querySelectorAll('.layer-checkbox').forEach(cb => {
+    const layerType = cb.closest('.layer-item')?.querySelector('.layer-type')?.textContent;
+    const layerId = parseInt(cb.id.replace('layer-', ''));
+    
+    if (layerType !== 'layerSection' && layerType !== 'group') {
+      cb.checked = true;
+      selectedLayerIds.add(layerId);
+    } else {
+      cb.checked = false;
+      selectedLayerIds.delete(layerId);
+    }
+  });
+  updateSelectionInfo();
+  showStatus(`Selected ${selectedLayerIds.size} layers`);
 }
 
 // Create Group
