@@ -180,40 +180,70 @@ function initializeColorControls(): void {
   if (textColorWheel && textColorHex && textColorDisplay) {
     textColorWheel.addEventListener('input', () => {
       const color = textColorWheel.value;
-      textColorHex.value = color;
+      textColorHex.value = color.toUpperCase();
       textColorDisplay.style.backgroundColor = color;
     });
 
     textColorHex.addEventListener('input', () => {
-      const color = textColorHex.value;
+      let color = textColorHex.value.trim();
+      if (!color.startsWith('#')) {
+        color = '#' + color;
+      }
       if (isValidHexColor(color)) {
         textColorWheel.value = color;
         textColorDisplay.style.backgroundColor = color;
+        textColorHex.value = color.toUpperCase();
+      }
+    });
+
+    textColorHex.addEventListener('blur', () => {
+      let color = textColorHex.value.trim();
+      if (!color.startsWith('#')) {
+        color = '#' + color;
+      }
+      if (!isValidHexColor(color)) {
+        textColorHex.value = textColorWheel.value.toUpperCase();
       }
     });
 
     // Initialize display
     textColorDisplay.style.backgroundColor = textColorWheel.value;
+    textColorHex.value = textColorWheel.value.toUpperCase();
   }
 
   // Sync shape color controls
   if (shapeColorWheel && shapeColorHex && shapeColorDisplay) {
     shapeColorWheel.addEventListener('input', () => {
       const color = shapeColorWheel.value;
-      shapeColorHex.value = color;
+      shapeColorHex.value = color.toUpperCase();
       shapeColorDisplay.style.backgroundColor = color;
     });
 
     shapeColorHex.addEventListener('input', () => {
-      const color = shapeColorHex.value;
+      let color = shapeColorHex.value.trim();
+      if (!color.startsWith('#')) {
+        color = '#' + color;
+      }
       if (isValidHexColor(color)) {
         shapeColorWheel.value = color;
         shapeColorDisplay.style.backgroundColor = color;
+        shapeColorHex.value = color.toUpperCase();
+      }
+    });
+
+    shapeColorHex.addEventListener('blur', () => {
+      let color = shapeColorHex.value.trim();
+      if (!color.startsWith('#')) {
+        color = '#' + color;
+      }
+      if (!isValidHexColor(color)) {
+        shapeColorHex.value = shapeColorWheel.value.toUpperCase();
       }
     });
 
     // Initialize display
     shapeColorDisplay.style.backgroundColor = shapeColorWheel.value;
+    shapeColorHex.value = shapeColorWheel.value.toUpperCase();
   }
 }
 
