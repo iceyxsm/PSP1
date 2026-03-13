@@ -37,8 +37,10 @@
                 <sp-textfield id="groupNameInput" placeholder="Auto-generate if empty">
                     <sp-label slot="label">Group Name (optional)</sp-label>
                 </sp-textfield>
-                <sp-button variant="cta" id="createGroup">Create Group</sp-button>
-                <sp-button id="smartAutoGroup">Smart Auto-Group</sp-button>
+                <div class="button-row">
+                    <sp-button variant="cta" id="createGroup">Create Group</sp-button>
+                    <sp-button id="smartAutoGroup">Smart Auto-Group</sp-button>
+                </div>
             </div>
         </div>
         
@@ -48,17 +50,17 @@
                 <sp-label>Bulk Styling</sp-label>
             </div>
             <div class="section-content">
-                <div class="input-row">
+                <div class="color-row">
                     <sp-label>Text Color</sp-label>
                     <input type="color" class="color-picker" id="textColor" value="#000000">
-                    <sp-button id="applyTextColor">Apply to Selected</sp-button>
                 </div>
+                <sp-button id="applyTextColor">Apply Text Color</sp-button>
                 
-                <div class="input-row">
+                <div class="color-row">
                     <sp-label>Shape Color</sp-label>
                     <input type="color" class="color-picker" id="shapeColor" value="#000000">
-                    <sp-button id="applyShapeColor">Apply to Selected</sp-button>
                 </div>
+                <sp-button id="applyShapeColor">Apply Shape Color</sp-button>
                 
                 <sp-dropdown id="fontSelect" placeholder="Select Font...">
                     <sp-label slot="label">Font</sp-label>
@@ -80,21 +82,14 @@
                 <sp-label>Group Management</sp-label>
             </div>
             <div class="section-content">
-                <sp-button id="toggleVisibility">Toggle Visibility</sp-button>
+                <div class="button-row">
+                    <sp-button id="toggleVisibility">Toggle Visibility</sp-button>
+                    <sp-button id="replaceImage">Replace Image</sp-button>
+                </div>
                 <div class="button-row">
                     <sp-button id="showAll">Show All</sp-button>
                     <sp-button id="hideAll">Hide All</sp-button>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Image Tools -->
-        <div class="section">
-            <div class="section-header">
-                <sp-label>Image Tools</sp-label>
-            </div>
-            <div class="section-content">
-                <sp-button id="replaceImage">Replace Image</sp-button>
             </div>
         </div>
         

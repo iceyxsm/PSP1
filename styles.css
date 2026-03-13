@@ -78,19 +78,40 @@ body {
   min-width: 0;
 }
 
-/* Button Rows - Responsive wrapping */
+/* Button Rows - 2 buttons per row */
 .button-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 4px;
   width: 100%;
-  flex-wrap: wrap;
   min-width: 0;
 }
 
 .button-row sp-button {
-  flex: 1 1 auto;
-  min-width: 80px;
+  min-width: 0;
   height: 24px;
+}
+
+/* Color Rows - Label and color picker */
+.color-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.color-row sp-label {
+  min-width: 80px;
+  flex-shrink: 0;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.color-row .color-picker {
+  width: 40px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 /* Input Rows - Responsive layout */
