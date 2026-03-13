@@ -14,16 +14,24 @@
         <!-- Layer Selection Section -->
         <div class="section">
             <div class="section-header">
-                <label class="section-title">Select Layers</label>
+                <label class="section-title">Select Layers/Groups</label>
                 <button class="btn btn-small" id="refreshLayers">Refresh</button>
             </div>
             <div class="section-content">
+                <div class="selection-info">
+                    <span id="selectionCount">0 selected</span>
+                    <span id="selectionTypes"></span>
+                </div>
                 <div class="layer-list" id="layerList">
-                    <div class="help-text">Click Refresh to load layers</div>
+                    <div class="help-text">Click Refresh to load layers and groups</div>
                 </div>
                 <div class="button-group">
                     <button class="btn" id="selectAll">Select All</button>
-                    <button class="btn" id="deselectAll">Deselect All</button>
+                    <button class="btn" id="deselectAll">Clear Selection</button>
+                </div>
+                <div class="button-group">
+                    <button class="btn" id="selectGroups">Groups Only</button>
+                    <button class="btn" id="selectLayers">Layers Only</button>
                 </div>
             </div>
         </div>
@@ -51,28 +59,31 @@
                 <!-- Text Color -->
                 <div class="color-section">
                     <label class="color-label">Text Color</label>
+                    <div class="target-info" id="textColorTarget">Select layers/groups first</div>
                     <div class="color-picker-container">
                         <input type="color" class="color-wheel" id="textColorWheel" value="#000000">
-                        <div class="color-display" id="textColorDisplay" style="background-color: #000000;"></div>
+                        <div class="color-display" id="textColorDisplay" style="background-color: #000000;" title="Current Color"></div>
                         <input type="text" class="hex-input" id="textColorHex" value="#000000" placeholder="#000000" maxlength="7">
-                        <button class="btn btn-compact" id="applyTextColor">Apply</button>
                     </div>
+                    <button class="btn btn-full" id="applyTextColor" disabled>Apply Text Color</button>
                 </div>
                 
                 <!-- Shape Color -->
                 <div class="color-section">
                     <label class="color-label">Shape Color</label>
+                    <div class="target-info" id="shapeColorTarget">Select layers/groups first</div>
                     <div class="color-picker-container">
                         <input type="color" class="color-wheel" id="shapeColorWheel" value="#ff0000">
-                        <div class="color-display" id="shapeColorDisplay" style="background-color: #ff0000;"></div>
+                        <div class="color-display" id="shapeColorDisplay" style="background-color: #ff0000;" title="Current Color"></div>
                         <input type="text" class="hex-input" id="shapeColorHex" value="#ff0000" placeholder="#ff0000" maxlength="7">
-                        <button class="btn btn-compact" id="applyShapeColor">Apply</button>
                     </div>
+                    <button class="btn btn-full" id="applyShapeColor" disabled>Apply Shape Color</button>
                 </div>
                 
                 <!-- Font Selection -->
                 <div class="font-section">
                     <label class="color-label">Font</label>
+                    <div class="target-info" id="fontTarget">Select text layers/groups first</div>
                     <div class="font-controls">
                         <select class="select-input" id="fontSelect">
                             <option value="">Select Font...</option>
@@ -81,9 +92,14 @@
                             <option value="Times New Roman">Times New Roman</option>
                             <option value="Courier New">Courier New</option>
                             <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Tahoma">Tahoma</option>
+                            <option value="Trebuchet MS">Trebuchet MS</option>
+                            <option value="Impact">Impact</option>
+                            <option value="Comic Sans MS">Comic Sans MS</option>
                         </select>
-                        <button class="btn btn-compact" id="applyFont">Apply</button>
                     </div>
+                    <button class="btn btn-full" id="applyFont" disabled>Apply Font</button>
                 </div>
             </div>
         </div>
