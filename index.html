@@ -8,22 +8,22 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <sp-heading size="M">PSP1 - Layer Manager Pro</sp-heading>
+            <h2>PSP1 - Layer Manager Pro</h2>
         </div>
         
         <!-- Layer Selection Section -->
         <div class="section">
             <div class="section-header">
-                <sp-label>Select Layers</sp-label>
-                <sp-button size="s" id="refreshLayers">Refresh</sp-button>
+                <label class="section-title">Select Layers</label>
+                <button class="btn btn-small" id="refreshLayers">Refresh</button>
             </div>
             <div class="section-content">
                 <div class="layer-list" id="layerList">
-                    <sp-body class="help-text">Click Refresh to load layers</sp-body>
+                    <div class="help-text">Click Refresh to load layers</div>
                 </div>
-                <div class="button-row">
-                    <sp-button id="selectAll">Select All</sp-button>
-                    <sp-button id="deselectAll">Deselect All</sp-button>
+                <div class="button-group">
+                    <button class="btn" id="selectAll">Select All</button>
+                    <button class="btn" id="deselectAll">Deselect All</button>
                 </div>
             </div>
         </div>
@@ -31,15 +31,13 @@
         <!-- Group Actions -->
         <div class="section">
             <div class="section-header">
-                <sp-label>Group Actions</sp-label>
+                <label class="section-title">Group Actions</label>
             </div>
             <div class="section-content">
-                <sp-textfield id="groupNameInput" placeholder="Auto-generate if empty">
-                    <sp-label slot="label">Group Name (optional)</sp-label>
-                </sp-textfield>
-                <div class="button-row">
-                    <sp-button variant="cta" id="createGroup">Create Group</sp-button>
-                    <sp-button id="smartAutoGroup">Smart Auto-Group</sp-button>
+                <input type="text" class="text-input" id="groupNameInput" placeholder="Auto-generate if empty">
+                <div class="button-group">
+                    <button class="btn btn-primary" id="createGroup">Create Group</button>
+                    <button class="btn" id="smartAutoGroup">Smart Auto-Group</button>
                 </div>
             </div>
         </div>
@@ -47,48 +45,62 @@
         <!-- Bulk Styling -->
         <div class="section">
             <div class="section-header">
-                <sp-label>Bulk Styling</sp-label>
+                <label class="section-title">Bulk Styling</label>
             </div>
             <div class="section-content">
-                <div class="color-row">
-                    <sp-label>Text Color</sp-label>
-                    <input type="color" class="color-picker" id="textColor" value="#000000">
+                <!-- Text Color -->
+                <div class="color-section">
+                    <label class="color-label">Text Color</label>
+                    <div class="color-picker-container">
+                        <input type="color" class="color-wheel" id="textColorWheel" value="#000000">
+                        <div class="color-display" id="textColorDisplay"></div>
+                        <input type="text" class="hex-input" id="textColorHex" value="#000000" placeholder="#000000">
+                    </div>
+                    <button class="btn btn-compact" id="applyTextColor">Apply</button>
                 </div>
-                <sp-button id="applyTextColor">Apply Text Color</sp-button>
                 
-                <div class="color-row">
-                    <sp-label>Shape Color</sp-label>
-                    <input type="color" class="color-picker" id="shapeColor" value="#000000">
+                <!-- Shape Color -->
+                <div class="color-section">
+                    <label class="color-label">Shape Color</label>
+                    <div class="color-picker-container">
+                        <input type="color" class="color-wheel" id="shapeColorWheel" value="#ff0000">
+                        <div class="color-display" id="shapeColorDisplay"></div>
+                        <input type="text" class="hex-input" id="shapeColorHex" value="#ff0000" placeholder="#ff0000">
+                    </div>
+                    <button class="btn btn-compact" id="applyShapeColor">Apply</button>
                 </div>
-                <sp-button id="applyShapeColor">Apply Shape Color</sp-button>
                 
-                <sp-dropdown id="fontSelect" placeholder="Select Font...">
-                    <sp-label slot="label">Font</sp-label>
-                    <sp-menu slot="options">
-                        <sp-menu-item value="Arial">Arial</sp-menu-item>
-                        <sp-menu-item value="Helvetica">Helvetica</sp-menu-item>
-                        <sp-menu-item value="Times New Roman">Times New Roman</sp-menu-item>
-                        <sp-menu-item value="Courier New">Courier New</sp-menu-item>
-                        <sp-menu-item value="Georgia">Georgia</sp-menu-item>
-                    </sp-menu>
-                </sp-dropdown>
-                <sp-button id="applyFont">Apply Font</sp-button>
+                <!-- Font Selection -->
+                <div class="font-section">
+                    <label class="color-label">Font</label>
+                    <div class="font-controls">
+                        <select class="select-input" id="fontSelect">
+                            <option value="">Select Font...</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Georgia">Georgia</option>
+                        </select>
+                        <button class="btn btn-compact" id="applyFont">Apply</button>
+                    </div>
+                </div>
             </div>
         </div>
         
         <!-- Group Management -->
         <div class="section">
             <div class="section-header">
-                <sp-label>Group Management</sp-label>
+                <label class="section-title">Group Management</label>
             </div>
             <div class="section-content">
-                <div class="button-row">
-                    <sp-button id="toggleVisibility">Toggle Visibility</sp-button>
-                    <sp-button id="replaceImage">Replace Image</sp-button>
+                <div class="button-group">
+                    <button class="btn" id="toggleVisibility">Toggle Visibility</button>
+                    <button class="btn" id="replaceImage">Replace Image</button>
                 </div>
-                <div class="button-row">
-                    <sp-button id="showAll">Show All</sp-button>
-                    <sp-button id="hideAll">Hide All</sp-button>
+                <div class="button-group">
+                    <button class="btn" id="showAll">Show All</button>
+                    <button class="btn" id="hideAll">Hide All</button>
                 </div>
             </div>
         </div>

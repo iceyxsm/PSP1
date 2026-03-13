@@ -125,6 +125,9 @@ function initializeUI(): void {
   progressBar = document.getElementById('progressBar');
   layerListElement = document.getElementById('layerList');
 
+  // Initialize color controls
+  initializeColorControls();
+
   // Bind layer list buttons
   const refreshLayersBtn = document.getElementById('refreshLayers');
   const selectAllBtn = document.getElementById('selectAll');
@@ -161,14 +164,88 @@ function initializeUI(): void {
   replaceImageBtn?.addEventListener('click', handleImageReplace);
 }
 
+// Initialize color controls with sync functionality
+function initializeColorControls(): void {
+  // Text color controls
+  const textColorWheel = document.getElementById('textColorWheel') as HTMLInputElement;
+  const textColorHex = document.getElementById('textColorHex') as HTMLInputElement;
+  const textColorDisplay = document.getElementById('textColorDisplay') as HTMLElement;
+
+  // Shape color controls
+  const shapeColorWheel = document.getElementById('shapeColorWheel') as HTMLInputElement;
+  const shapeColorHex = document.getElementById('shapeColorHex') as HTMLInputElement;
+  const shapeColorDisplay = document.getElementById('shapeColorDisplay') as HTMLElement;
+
+  // Sync text color controls
+  if (textColorWheel && textColorHex && textColorDisplay) {
+    textColorWheel.addEventListener('input', () => {
+      const color = textColorWheel.value;
+      textColorHex.value = color;
+      textColorDisplay.style.backgroundColor = color;
+    });
+
+    textColorHex.addEventListener('input', () => {
+      const color = textColorHex.value;
+      if (isValidHexColor(color)) {
+        textColorWheel.value = color;
+        textColorDisplay.style.backgroundColor = color;
+      }
+    });
+
+    // Initialize display
+    textColorDisplay.style.backgroundColor = textColorWheel.value;
+  }
+
+  // Sync shape color controls
+  if (shapeColorWheel && shapeColorHex && shapeColorDisplay) {
+    shapeColorWheel.addEventListener('input', () => {
+      const color = shapeColorWheel.value;
+      shapeColorHex.value = color;
+      shapeColorDisplay.style.backgroundColor = color;
+    });
+
+    shapeColorHex.addEventListener('input', () => {
+      const color = shapeColorHex.value;
+      if (isValidHexColor(color)) {
+        shapeColorWheel.value = color;
+        shapeColorDisplay.style.backgroundColor = color;
+      }
+    });
+
+    // Initialize display
+    shapeColorDisplay.style.backgroundColor = shapeColorWheel.value;
+  }
+}
+
+// Validate hex color format
+function isValidHexColor(hex: string): boolean {
+  return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(hex);
+}
+
 // Update UI state
 function updateUI(): void {
-  const textColorPicker = document.getElementById('textColor') as HTMLInputElement;
-  const shapeColorPicker = document.getElementById('shapeColor') as HTMLInputElement;
+  const textColorWheel = document.getElementById('textColorWheel') as HTMLInputElement;
+  const textColorHex = document.getElementById('textColorHex') as HTMLInputElement;
+  const textColorDisplay = document.getElementById('textColorDisplay') as HTMLElement;
+  const shapeColorWheel = document.getElementById('shapeColorWheel') as HTMLInputElement;
+  const shapeColorHex = document.getElementById('shapeColorHex') as HTMLInputElement;
+  const shapeColorDisplay = document.getElementById('shapeColorDisplay') as HTMLElement;
 
   if (pluginState.recentColors.length > 0) {
-    if (textColorPicker) textColorPicker.value = pluginState.recentColors[0];
-    if (shapeColorPicker) shapeColorPicker.value = pluginState.recentColors[0];
+    const textColor = pluginState.recentColors[0];
+    const shapeColor = pluginState.recentColors[1] || '#ff0000';
+
+    if (textColorWheel && textColorHex && textColorDisplay) {
+      textColorWheel.value = textColor;
+      textColorHex.value = textColor;
+      textColorDisplay.style.backgroundColor = textColor;
+    }
+
+    if (shapeColorWheel && shapeColorHex && shapeColorDisplay) {
+      shapeColorWheel.value = shapeColor;
+      shapeColorHex.value = shapeColor;
+      shapeColorDisplay.style.backgroundColor = shapeColor;
+    }
   }
 }
 
@@ -495,7 +572,7 @@ async function handleBulkColorText(): Promise<void> {
       return;
     }
 
-    const colorInput = document.getElementById('textColor') as HTMLInputElement;
+    const colorInput = document.getElementById('textColorHex') as HTMLInputElement;
     const color = colorInput?.value || '#000000';
     showProgress(true);
     updateProgress(25);
@@ -575,7 +652,7 @@ async function handleBulkColorShapes(): Promise<void> {
       return;
     }
 
-    const colorInput = document.getElementById('shapeColor') as HTMLInputElement;
+    const colorInput = document.getElementById('shapeColorHex') as HTMLInputElement;
     const color = colorInput?.value || '#000000';
     showProgress(true);
     updateProgress(25);
